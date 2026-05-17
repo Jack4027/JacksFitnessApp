@@ -1,0 +1,166 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="router.navigate(['/dashboard'])">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Body metrics</span>
+  <span class="spacer"></span>
+  <button mat-icon-button (click)="showForm = !showForm">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="metrics-container">
+
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+  } @else {
+
+  @if (showForm) {
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Log metrics</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="metricForm" class="metric-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Date</mat-label>
+          <input matInput type="date" formControlName="date" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Weight (kg)</mat-label>
+          <input matInput type="number" formControlName="weightKg" step="0.1" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Body fat (%)</mat-label>
+          <input matInput type="number" formControlName="bodyFatPercentage" step="0.1" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Muscle mass (kg)</mat-label>
+          <input matInput type="number" formControlName="muscleMassKg" step="0.1" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Chest (cm)</mat-label>
+          <input matInput type="number" formControlName="chestCm" step="0.5" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Waist (cm)</mat-label>
+          <input matInput type="number" formControlName="waistCm" step="0.5" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Hips (cm)</mat-label>
+          <input matInput type="number" formControlName="hipsCm" step="0.5" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Bicep (cm)</mat-label>
+          <input matInput type="number" formControlName="bicepCm" step="0.5" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Thigh (cm)</mat-label>
+          <input matInput type="number" formControlName="thighCm" step="0.5" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notes</mat-label>
+          <textarea matInput formControlName="notes" rows="2"></textarea>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary"
+        [disabled]="isSaving" (click)="saveMetric()">
+        @if (isSaving) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Save
+        }
+      </button>
+      <button mat-button (click)="showForm = false">Cancel</button>
+    </mat-card-actions>
+  </mat-card>
+  }
+
+  @if (metrics.length === 0 && !showForm) {
+  <div class="empty-state">
+    <mat-icon>monitor_weight</mat-icon>
+    <p>No metrics logged yet.</p>
+    <button mat-raised-button color="primary" (click)="showForm = true">
+      Log your first measurement
+    </button>
+  </div>
+  }
+
+  @if (metrics.length > 0) {
+  <mat-accordion>
+    @for (metric of metrics; track metric.id) {
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ formatDate(metric.date) }}</mat-panel-title>
+        <mat-panel-description>
+          @if (metric.weightKg) { {{ metric.weightKg }}kg }
+          @if (metric.bodyFatPercentage) { · {{ metric.bodyFatPercentage }}% BF }
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="metric-detail">
+        <div class="metric-grid">
+          @if (metric.weightKg) {
+          <div class="metric-item">
+            <p class="metric-label">Weight</p>
+            <p class="metric-value">{{ metric.weightKg }}kg</p>
+          </div>
+          }
+          @if (metric.bodyFatPercentage) {
+          <div class="metric-item">
+            <p class="metric-label">Body fat</p>
+            <p class="metric-value">{{ metric.bodyFatPercentage }}%</p>
+          </div>
+          }
+          @if (metric.muscleMassKg) {
+          <div class="metric-item">
+            <p class="metric-label">Muscle mass</p>
+            <p class="metric-value">{{ metric.muscleMassKg }}kg</p>
+          </div>
+          }
+          @if (metric.chestCm) {
+          <div class="metric-item">
+            <p class="metric-label">Chest</p>
+            <p class="metric-value">{{ metric.chestCm }}cm</p>
+          </div>
+          }
+          @if (metric.waistCm) {
+          <div class="metric-item">
+            <p class="metric-label">Waist</p>
+            <p class="metric-value">{{ metric.waistCm }}cm</p>
+          </div>
+          }
+          @if (metric.hipsCm) {
+          <div class="metric-item">
+            <p class="metric-label">Hips</p>
+            <p class="metric-value">{{ metric.hipsCm }}cm</p>
+          </div>
+          }
+          @if (metric.bicepCm) {
+          <div class="metric-item">
+            <p class="metric-label">Bicep</p>
+            <p class="metric-value">{{ metric.bicepCm }}cm</p>
+          </div>
+          }
+          @if (metric.thighCm) {
+          <div class="metric-item">
+            <p class="metric-label">Thigh</p>
+            <p class="metric-value">{{ metric.thighCm }}cm</p>
+          </div>
+          }
+        </div>
+        @if (metric.notes) {
+        <p class="notes"><strong>Notes:</strong> {{ metric.notes }}</p>
+        }
+      </div>
+    </mat-expansion-panel>
+    }
+  </mat-accordion>
+  }
+
+  }
+</div>

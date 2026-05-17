@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="14.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Exceptions\" />
+    <Folder Include="Validators\Metrics\" />
+    <Folder Include="Validators\Nutrition\" />
+    <Folder Include="Validators\Training\Exercise\" />
+    <Folder Include="Validators\Training\Workout\" />
+    <Folder Include="Validators\Training\Programme\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JacksFitnessApp.Domain\JacksFitnessApp.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

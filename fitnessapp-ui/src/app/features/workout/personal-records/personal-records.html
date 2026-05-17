@@ -1,0 +1,40 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="router.navigate(['/dashboard'])">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Personal records</span>
+</mat-toolbar>
+
+<div class="pr-container">
+
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+  } @else if (personalRecords.length === 0) {
+  <div class="empty-state">
+    <mat-icon>emoji_events</mat-icon>
+    <p>No personal records yet. Start logging workouts!</p>
+    <button mat-raised-button color="primary"
+      (click)="router.navigate(['/workout'])">
+      Log a workout
+    </button>
+  </div>
+  } @else {
+  <div class="pr-grid">
+    @for (pr of personalRecords; track pr.exerciseId) {
+    <mat-card class="pr-card">
+      <mat-card-content>
+        <div class="pr-header">
+          <mat-icon class="trophy">emoji_events</mat-icon>
+          <p class="exercise-name">{{ pr.exerciseName }}</p>
+        </div>
+        <p class="pr-value">{{ pr.weightKg }}kg × {{ pr.reps }} reps</p>
+        <p class="pr-date">{{ formatDate(pr.achievedOn) }}</p>
+      </mat-card-content>
+    </mat-card>
+    }
+  </div>
+  }
+
+</div>

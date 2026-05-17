@@ -1,0 +1,6 @@
+@JacksFitnessApp.Host_HostAddress = http://localhost:5029
+
+GET {{JacksFitnessApp.Host_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

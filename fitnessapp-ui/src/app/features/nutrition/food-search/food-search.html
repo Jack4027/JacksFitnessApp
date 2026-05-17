@@ -1,0 +1,31 @@
+<div class="food-search-wrapper">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Search food</mat-label>
+    <input matInput
+      [formControl]="searchControl"
+      [matAutocomplete]="auto"
+      (input)="onInput($event)" />
+    <mat-spinner matSuffix diameter="18" *ngIf="isSearching"></mat-spinner>
+    <mat-icon matSuffix *ngIf="!isSearching">search</mat-icon>
+    <mat-autocomplete #auto="matAutocomplete"
+      (optionSelected)="onFoodSelected($event.option.value)">
+      @for (food of searchResults; track food.id) {
+      <mat-option [value]="food">
+        <div class="food-option">
+          <span class="food-name">{{ food.name }}</span>
+          @if (food.brand) {
+          <span class="food-brand">{{ food.brand }}</span>
+          }
+          <span class="food-macros">
+            {{ food.caloriesPer100g }} kcal ·
+            P {{ food.proteinPer100g }}g ·
+            C {{ food.carbsPer100g }}g ·
+            F {{ food.fatPer100g }}g
+            per 100g
+          </span>
+        </div>
+      </mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+</div>

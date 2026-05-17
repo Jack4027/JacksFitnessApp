@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="JacksFitnessApp.Application/JacksFitnessApp.Application.csproj" />
+  <Project Path="JacksFitnessApp.Domain/JacksFitnessApp.Domain.csproj" />
+  <Project Path="JacksFitnessApp.Host/JacksFitnessApp.Host.csproj" />
+  <Project Path="JacksFitnessApp.Infrastructure/JacksFitnessApp.Infrastructure.csproj" />
+  <Project Path="JacksFitnessApp.Tests/JacksFitnessApp.Tests.csproj" />
+</Solution>

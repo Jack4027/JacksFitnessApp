@@ -1,0 +1,25 @@
+.full-width {
+  width: 100%;
+}
+
+.food-option {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+.food-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.food-brand {
+  font-size: 12px;
+  color: #888;
+}
+
+.food-macros {
+  font-size: 11px;
+  color: #aaa;
+}

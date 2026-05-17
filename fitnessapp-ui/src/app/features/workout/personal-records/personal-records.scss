@@ -1,0 +1,71 @@
+.pr-container {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 64px);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 64px);
+  gap: 16px;
+  color: #999;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.pr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.pr-card {
+  mat-card-content {
+    padding: 16px;
+  }
+}
+
+.pr-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.trophy {
+  color: #ff9800;
+}
+
+.exercise-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.pr-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #3f51b5;
+  margin: 0 0 4px;
+}
+
+.pr-date {
+  font-size: 12px;
+  color: #999;
+  margin: 0;
+}

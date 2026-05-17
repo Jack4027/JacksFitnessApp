@@ -1,0 +1,63 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="router.navigate(['/dashboard'])">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Programmes</span>
+  <span class="spacer"></span>
+  <button mat-icon-button (click)="router.navigate(['/programmes/builder'])">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="programmes-container">
+
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+  } @else if (programmes.length === 0) {
+  <div class="empty-state">
+    <mat-icon>calendar_today</mat-icon>
+    <p>No programmes yet.</p>
+    <button mat-raised-button color="primary"
+      (click)="router.navigate(['/programmes/builder'])">
+      Create your first programme
+    </button>
+  </div>
+  } @else {
+  <div class="programme-grid">
+    @for (programme of programmes; track programme.id) {
+    <mat-card class="programme-card">
+      <mat-card-header>
+        <mat-card-title>{{ programme.name }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ programme.durationWeeks }} weeks ·
+          {{ goalLabels[programme.goal] }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if (programme.description) {
+        <p class="description">{{ programme.description }}</p>
+        }
+        <div class="programme-meta">
+          <span class="week-count">{{ programme.weeks.length }} weeks configured</span>
+          @if (programme.isActive) {
+          <mat-chip color="primary" highlighted>Active</mat-chip>
+          }
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary"
+          (click)="router.navigate(['/programmes/builder'], { queryParams: { id: programme.id } })">
+          <mat-icon>edit</mat-icon> Edit
+        </button>
+        <button mat-button color="warn" (click)="deleteProgramme(programme.id)">
+          <mat-icon>delete</mat-icon> Delete
+        </button>
+      </mat-card-actions>
+    </mat-card>
+    }
+  </div>
+  }
+
+</div>

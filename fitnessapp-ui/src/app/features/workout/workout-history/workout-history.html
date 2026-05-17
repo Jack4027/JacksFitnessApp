@@ -1,0 +1,111 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="router.navigate(['/dashboard'])">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Workout history</span>
+</mat-toolbar>
+
+<div class="history-container">
+
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+  } @else if (workouts.length === 0) {
+  <div class="empty-state">
+    <mat-icon>fitness_center</mat-icon>
+    <p>No workouts logged yet.</p>
+    <button mat-raised-button color="primary"
+      (click)="router.navigate(['/workout'])">
+      Log your first workout
+    </button>
+  </div>
+  } @else {
+  <mat-accordion>
+    @for (workout of workouts; track workout.id) {
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ formatDate(workout.date) }}</mat-panel-title>
+        <mat-panel-description>
+          {{ getTotalSets(workout) }} sets
+          @if (workout.durationMinutes) {
+            · {{ workout.durationMinutes }} min
+          }
+          @if (workout.programmeDayName) {
+            · {{ workout.programmeDayName }}
+          }
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="workout-detail">
+        <p class="exercises-summary">
+          <strong>Exercises:</strong> {{ getUniqueExercises(workout).join(', ') }}
+        </p>
+
+        @if (workout.sets.length > 0) {
+        <h4 class="section-label">Strength</h4>
+        <table class="sets-table">
+          <thead>
+            <tr>
+              <th>Exercise</th>
+              <th>Set</th>
+              <th>Reps</th>
+              <th>Weight</th>
+              <th>PR</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (set of workout.sets; track set.id) {
+            <tr>
+              <td>{{ set.exercise.name }}</td>
+              <td>{{ set.setNumber }}</td>
+              <td>{{ set.repsCompleted }}</td>
+              <td>{{ set.weightKg }}kg</td>
+              <td>
+                @if (set.isPersonalRecord) {
+                <mat-icon class="pr-icon">emoji_events</mat-icon>
+                }
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+        }
+
+        @if (workout.cardioSets.length > 0) {
+        <h4 class="section-label">Cardio</h4>
+        <table class="sets-table">
+          <thead>
+            <tr>
+              <th>Exercise</th>
+              <th>Duration</th>
+              <th>Distance</th>
+              <th>Avg HR</th>
+              <th>Calories</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (set of workout.cardioSets; track set.id) {
+            <tr>
+              <td>{{ set.exercise.name }}</td>
+              <td>{{ formatDuration(set.durationSeconds) }}</td>
+              <td>{{ set.distanceKm ?? '-' }}km</td>
+              <td>{{ set.avgHeartRate ?? '-' }}</td>
+              <td>{{ set.caloriesBurned ?? '-' }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+        }
+
+        @if (workout.notes) {
+        <p class="notes"><strong>Notes:</strong> {{ workout.notes }}</p>
+        }
+      </div>
+
+    </mat-expansion-panel>
+    }
+  </mat-accordion>
+  }
+
+</div>

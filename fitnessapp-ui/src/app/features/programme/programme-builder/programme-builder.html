@@ -1,0 +1,203 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="router.navigate(['/programmes'])">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+<span>{{ pageTitle }}</span>
+</mat-toolbar>
+
+<div class="builder-container">
+
+  @if (isLoading) {
+  <div class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+  } @else {
+
+  <!-- Programme details form -->
+  <mat-card class="programme-form-card">
+    <mat-card-header>
+      <mat-card-title>Programme details</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="programmeForm" class="programme-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Goal</mat-label>
+          <mat-select formControlName="goal">
+            @for (goal of goals; track goal.value) {
+            <mat-option [value]="goal.value">{{ goal.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Duration (weeks)</mat-label>
+          <input matInput type="number" formControlName="durationWeeks" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="2"></textarea>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+    <mat-card-actions>
+      @if (!programme) {
+      <button mat-raised-button color="primary"
+        [disabled]="programmeForm.invalid || isSaving"
+        (click)="createProgramme()">
+        @if (isSaving) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Create programme
+        }
+      </button>
+      }
+    </mat-card-actions>
+  </mat-card>
+
+  @if (programme) {
+
+  <!-- Weeks -->
+  <mat-card class="weeks-card">
+    <mat-card-header>
+      <mat-card-title>Weeks</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+
+      <mat-accordion>
+        @for (week of programme.weeks; track week.id) {
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>Week {{ week.weekNumber }}</mat-panel-title>
+            <mat-panel-description>{{ week.days.length }} days</mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="week-content">
+            @for (day of week.days; track day.id) {
+            <div class="day-block">
+              <div class="day-header">
+                <span class="day-name">{{ day.name }}</span>
+                <span class="day-meta">{{ day.plannedExercises.length }} exercises</span>
+              </div>
+
+              @for (pe of day.plannedExercises; track pe.id) {
+              <div class="planned-exercise">
+                <span class="exercise-name">{{ pe.exercise.name }}</span>
+                <span class="exercise-target">
+                  {{ pe.targetSets }} × {{ pe.targetRepsMin }}-{{ pe.targetRepsMax }} reps
+                  @if (pe.targetWeight) { @ {{ pe.targetWeight }}kg }
+                </span>
+              </div>
+              }
+
+              @if (selectedDayId === day.id) {
+              <div class="add-exercise-form">
+                <form [formGroup]="exerciseForm" class="exercise-form">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Exercise</mat-label>
+                    <mat-select formControlName="exerciseId">
+                      @for (exercise of exercises; track exercise.id) {
+                      <mat-option [value]="exercise.id">{{ exercise.name }}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                  <div class="form-row">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Sets</mat-label>
+                      <input matInput type="number" formControlName="targetSets" />
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Min reps</mat-label>
+                      <input matInput type="number" formControlName="targetRepsMin" />
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Max reps</mat-label>
+                      <input matInput type="number" formControlName="targetRepsMax" />
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>Target weight (kg)</mat-label>
+                      <input matInput type="number" formControlName="targetWeight" />
+                    </mat-form-field>
+                  </div>
+                  <div class="form-actions">
+                    <button mat-raised-button color="primary"
+                      [disabled]="exerciseForm.invalid"
+                      (click)="addExercise(day.id)">
+                      Add exercise
+                    </button>
+                    <button mat-button (click)="selectedDayId = null">Cancel</button>
+                  </div>
+                </form>
+              </div>
+              } @else {
+              <button mat-button color="primary"
+                (click)="selectedDayId = day.id">
+                <mat-icon>add</mat-icon> Add exercise
+              </button>
+              }
+            </div>
+            }
+
+            @if (selectedWeekId === week.id) {
+            <div class="add-day-form">
+              <form [formGroup]="dayForm" class="day-form">
+                <mat-form-field appearance="outline">
+                  <mat-label>Day name</mat-label>
+                  <input matInput formControlName="name"
+                    placeholder="e.g. Push day, Leg day" />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Order</mat-label>
+                  <input matInput type="number" formControlName="orderIndex" />
+                </mat-form-field>
+                <div class="form-actions">
+                  <button mat-raised-button color="primary"
+                    [disabled]="dayForm.invalid"
+                    (click)="addDay(week.id)">
+                    Add day
+                  </button>
+                  <button mat-button (click)="selectedWeekId = null">Cancel</button>
+                </div>
+              </form>
+            </div>
+            } @else {
+            <button mat-button color="primary"
+              (click)="selectedWeekId = week.id">
+              <mat-icon>add</mat-icon> Add day
+            </button>
+            }
+          </div>
+
+        </mat-expansion-panel>
+        }
+      </mat-accordion>
+
+      <!-- Add week form -->
+      <div class="add-week-form">
+        <mat-divider class="divider"></mat-divider>
+        <form [formGroup]="weekForm" class="week-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Week number</mat-label>
+            <input matInput type="number" formControlName="weekNumber" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Notes (optional)</mat-label>
+            <input matInput formControlName="notes" />
+          </mat-form-field>
+          <button mat-raised-button color="primary"
+            [disabled]="weekForm.invalid"
+            (click)="addWeek()">
+            Add week
+          </button>
+        </form>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+
+  }
+
+  }
+</div>

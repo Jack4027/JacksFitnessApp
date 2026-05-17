@@ -1,0 +1,148 @@
+<mat-toolbar color="primary">
+  <span>JacksFitnessApp</span>
+  <span class="spacer"></span>
+  <span class="display-name">{{ displayName }}</span>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="navigate('/metrics')">
+      <mat-icon>monitor_weight</mat-icon>
+      <span>Body metrics</span>
+    </button>
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Sign out</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+@if (!isLoading) {
+<div class="dashboard-container">
+
+  <div class="section">
+    <h2 class="section-title">Quick actions</h2>
+    <div class="quick-actions">
+      <button mat-raised-button color="primary" (click)="navigate('/workout')">
+        <mat-icon>fitness_center</mat-icon>
+        Log workout
+      </button>
+      <button mat-raised-button color="primary" (click)="navigate('/nutrition')">
+        <mat-icon>restaurant</mat-icon>
+        Log nutrition
+      </button>
+      <button mat-raised-button (click)="navigate('/programmes')">
+        <mat-icon>calendar_today</mat-icon>
+        Programmes
+      </button>
+      <button mat-raised-button (click)="navigate('/workout/history')">
+        <mat-icon>history</mat-icon>
+        Workout history
+      </button>
+    </div>
+  </div>
+
+  @if (latestMetric) {
+  <div class="section">
+    <h2 class="section-title">Latest metrics</h2>
+    <div class="metrics-row">
+      @if (latestMetric.weightKg) {
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <p class="metric-label">Weight</p>
+          <p class="metric-value">{{ latestMetric.weightKg }}kg</p>
+          <p class="metric-date">{{ formatDate(latestMetric.date) }}</p>
+        </mat-card-content>
+      </mat-card>
+      }
+      @if (latestMetric.bodyFatPercentage) {
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <p class="metric-label">Body fat</p>
+          <p class="metric-value">{{ latestMetric.bodyFatPercentage }}%</p>
+          <p class="metric-date">{{ formatDate(latestMetric.date) }}</p>
+        </mat-card-content>
+      </mat-card>
+      }
+      @if (latestMetric.muscleMassKg) {
+      <mat-card class="metric-card">
+        <mat-card-content>
+          <p class="metric-label">Muscle mass</p>
+          <p class="metric-value">{{ latestMetric.muscleMassKg }}kg</p>
+          <p class="metric-date">{{ formatDate(latestMetric.date) }}</p>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+  </div>
+  }
+
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Recent workouts</h2>
+      <button mat-button color="primary" (click)="navigate('/workout/history')">View all</button>
+    </div>
+    @if (recentWorkouts.length === 0) {
+    <div class="empty-state">
+      <p>No workouts logged yet.</p>
+      <button mat-raised-button color="primary" (click)="navigate('/workout')">Log your first workout</button>
+    </div>
+    } @else {
+    <div class="workout-list">
+      @for (workout of recentWorkouts; track workout.id) {
+      <mat-card class="workout-card" (click)="navigate('/workout/history')">
+        <mat-card-content>
+          <div class="workout-row">
+            <div>
+              <p class="workout-date">{{ formatDate(workout.date) }}</p>
+              <p class="workout-meta">
+                {{ workout.sets.length + workout.cardioSets.length }} sets
+                @if (workout.durationMinutes) {
+                  · {{ workout.durationMinutes }} min
+                }
+                @if (workout.programmeDayName) {
+                  · {{ workout.programmeDayName }}
+                }
+              </p>
+            </div>
+            <mat-icon class="chevron">chevron_right</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+    }
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Personal records</h2>
+      <button mat-button color="primary" (click)="navigate('/workout/personal-records')">View all</button>
+    </div>
+    @if (personalRecords.length === 0) {
+    <div class="empty-state">
+      <p>No personal records yet. Start logging workouts!</p>
+    </div>
+    } @else {
+    <div class="pr-list">
+      @for (pr of personalRecords; track pr.exerciseId) {
+      <mat-card class="pr-card">
+        <mat-card-content>
+          <div class="pr-row">
+            <p class="pr-exercise">{{ pr.exerciseName }}</p>
+            <p class="pr-value">{{ pr.weightKg }}kg × {{ pr.reps }}</p>
+          </div>
+          <p class="pr-date">{{ formatDate(pr.achievedOn) }}</p>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+    }
+  </div>
+
+</div>
+} @else {
+<div class="loading-container">
+  <mat-spinner></mat-spinner>
+</div>
+}
