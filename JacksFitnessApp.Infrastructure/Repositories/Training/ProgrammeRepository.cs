@@ -31,6 +31,22 @@ public class ProgrammeRepository : IProgrammeRepository
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
+    public async Task<ProgrammeWeek?> GetWeekByIdAsync(int id)
+    {
+        return await _context.ProgrammeWeeks
+            .Include(w => w.Days)
+                .ThenInclude(d => d.PlannedExercises)
+                    .ThenInclude(pe => pe.Exercise)
+            .FirstOrDefaultAsync(w => w.Id == id);
+    }
+
+    public async Task<ProgrammeDay?> GetDayByIdAsync(int id)
+    {
+        return await _context.ProgrammeDays
+            .Include(d => d.PlannedExercises)
+                .ThenInclude(pe => pe.Exercise)
+            .FirstOrDefaultAsync(d => d.Id == id);
+    }
     public async Task<Programme> AddAsync(Programme programme)
     {
         _context.Programmes.Add(programme);

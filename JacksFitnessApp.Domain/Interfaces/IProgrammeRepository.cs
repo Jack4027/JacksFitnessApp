@@ -10,6 +10,9 @@ public interface IProgrammeRepository
     Task UpdateAsync(Programme programme);
     Task DeleteAsync(int id);
 
+    Task<ProgrammeWeek?> GetWeekByIdAsync(int id);
+    Task<ProgrammeDay?> GetDayByIdAsync(int id);
+
     Task<ProgrammeWeek> AddWeekAsync(ProgrammeWeek week);
     Task<ProgrammeDay> AddDayAsync(ProgrammeDay day);
     Task<PlannedExercise> AddPlannedExerciseAsync(PlannedExercise plannedExercise);

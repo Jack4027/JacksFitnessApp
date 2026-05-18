@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using MediatR;
-using JacksFitnessApp.Application.DTOs.Training.Programme;
-using JacksFitnessApp.Domain.Interfaces.Training;
 using JacksFitnessApp.Application.Commands.Training;
+using JacksFitnessApp.Application.DTOs.Training.Programme;
+using JacksFitnessApp.Domain.Entities.Training;
+using JacksFitnessApp.Domain.Interfaces.Training;
+using MediatR;
 
 namespace JacksFitnessApp.Application.Handlers.Training.Programme;
 
@@ -19,11 +20,15 @@ public class AddProgrammeWeekHandler : IRequestHandler<AddProgrammeWeekCommand, 
 
     public async Task<ProgrammeWeekDto> Handle(AddProgrammeWeekCommand request, CancellationToken cancellationToken)
     {
-        var week = new Domain.Entities.Training.ProgrammeWeek
+        var programme = await _repository.GetByIdWithDetailsAsync(request.ProgrammeId)
+            ?? throw new KeyNotFoundException($"Programme {request.ProgrammeId} not found");
+
+        var week = new ProgrammeWeek
         {
-            ProgrammeId = request.ProgrammeId,
+            ProgrammeId = programme.Id,
             WeekNumber = request.WeekNumber,
-            Notes = request.Notes
+            Notes = request.Notes,
+            Days = new List<ProgrammeDay>()
         };
 
         var created = await _repository.AddWeekAsync(week);

@@ -19,9 +19,13 @@ public class LogWorkoutSetHandler : IRequestHandler<LogWorkoutSetCommand, Workou
 
     public async Task<WorkoutSetDto> Handle(LogWorkoutSetCommand request, CancellationToken cancellationToken)
     {
-        // Check if this is a personal record before saving
+        // Check session exists
+        var session = await _repository.GetByIdWithSetsAsync(request.WorkoutSessionId)
+            ?? throw new KeyNotFoundException($"Workout session {request.WorkoutSessionId} not found");
+
+        // Get personal record corresponding to this user and exercise, to determine if this set is a new PR
         var currentPR = await _repository.GetPersonalRecordForExerciseAsync(
-            (await _repository.GetByIdWithSetsAsync(request.WorkoutSessionId))!.UserId,
+            session.UserId,
             request.ExerciseId);
 
         var isPersonalRecord = currentPR == null || request.WeightKg > currentPR.WeightKg;

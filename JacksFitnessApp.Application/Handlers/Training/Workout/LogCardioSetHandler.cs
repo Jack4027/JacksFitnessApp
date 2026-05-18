@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using MediatR;
-using JacksFitnessApp.Application.DTOs.Training.Workout;
-using JacksFitnessApp.Domain.Interfaces.Training;
 using JacksFitnessApp.Application.Commands.Training;
+using JacksFitnessApp.Application.DTOs.Training.Workout;
+using JacksFitnessApp.Domain.Entities.Training;
+using JacksFitnessApp.Domain.Interfaces.Training;
+using MediatR;
 
 namespace JacksFitnessApp.Application.Handlers.Training.Workout;
 
@@ -19,9 +20,12 @@ public class LogCardioSetHandler : IRequestHandler<LogCardioSetCommand, CardioSe
 
     public async Task<CardioSetDto> Handle(LogCardioSetCommand request, CancellationToken cancellationToken)
     {
-        var set = new Domain.Entities.Training.CardioSet
+        var session = await _repository.GetByIdWithSetsAsync(request.WorkoutSessionId)
+            ?? throw new KeyNotFoundException($"Workout session {request.WorkoutSessionId} not found");
+
+        var set = new CardioSet
         {
-            WorkoutSessionId = request.WorkoutSessionId,
+            WorkoutSessionId = session.Id,
             ExerciseId = request.ExerciseId,
             SetNumber = request.SetNumber,
             DurationSeconds = request.DurationSeconds,

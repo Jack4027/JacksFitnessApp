@@ -145,9 +145,18 @@ public class OpenFoodFactsService : IFoodSearchService
         }
     }
 
-    private static string Sanitise(string input)
+    public static string Sanitise(string input)
     {
-        return System.Text.RegularExpressions.Regex.Replace(input, "<.*?>", string.Empty).Trim();
+        // Remove script tags and their content entirely
+        var noScript = System.Text.RegularExpressions.Regex.Replace(
+            input, "<script.*?>.*?</script>", string.Empty,
+            System.Text.RegularExpressions.RegexOptions.Singleline |
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        // Strip any remaining HTML tags
+        var noTags = System.Text.RegularExpressions.Regex.Replace(noScript, "<.*?>", string.Empty);
+
+        return noTags.Trim();
     }
 
     private static decimal ClampMacro(decimal value, decimal min, decimal max)

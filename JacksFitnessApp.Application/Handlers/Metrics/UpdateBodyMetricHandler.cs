@@ -19,7 +19,7 @@ public class UpdateBodyMetricHandler : IRequestHandler<UpdateBodyMetricCommand, 
 
     public async Task<BodyMetricDto> Handle(UpdateBodyMetricCommand request, CancellationToken cancellationToken)
     {
-        var metric = await _repository.GetLatestAsync(request.UserId)
+        var metric = await _repository.GetByIdAsync(request.Id)
             ?? throw new KeyNotFoundException($"Body metric {request.Id} not found");
 
         if (metric.UserId != request.UserId)

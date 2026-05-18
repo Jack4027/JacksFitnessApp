@@ -1,5 +1,6 @@
 ﻿namespace JacksFitnessApp.Application.DTOs.Metrics;
 
+// Dto to be passed back to the client after creating or retrieving body metrics. Contains all fields of the BodyMetric entity.
 public class BodyMetricDto
 {
     public int Id { get; set; }

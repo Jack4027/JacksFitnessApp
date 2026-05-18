@@ -15,7 +15,7 @@ public class DeleteBodyMetricHandler : IRequestHandler<DeleteBodyMetricCommand>
 
     public async Task Handle(DeleteBodyMetricCommand request, CancellationToken cancellationToken)
     {
-        var metric = await _repository.GetLatestAsync(request.UserId)
+        var metric = await _repository.GetByIdAsync(request.Id)
             ?? throw new KeyNotFoundException($"Body metric {request.Id} not found");
 
         if (metric.UserId != request.UserId)
