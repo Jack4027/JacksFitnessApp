@@ -17,6 +17,7 @@ public class GetBodyMetricsHandler : IRequestHandler<GetBodyMetricsQuery, IEnume
         _mapper = mapper;
     }
 
+    //Takes the GetBodyMetricsQuery, retrieves the body metrics for the specified user from the repository, and maps them to a collection of BodyMetricDto objects to return as the response.
     public async Task<IEnumerable<BodyMetricDto>> Handle(GetBodyMetricsQuery request, CancellationToken cancellationToken)
     {
         var metrics = await _repository.GetByUserIdAsync(request.UserId);

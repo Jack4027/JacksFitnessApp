@@ -17,6 +17,7 @@ public class GetLatestBodyMetricHandler : IRequestHandler<GetLatestBodyMetricQue
         _mapper = mapper;
     }
 
+    // Retrieves the latest body metric for a user and maps it to a DTO.
     public async Task<BodyMetricDto> Handle(GetLatestBodyMetricQuery request, CancellationToken cancellationToken)
     {
         var metric = await _repository.GetLatestAsync(request.UserId);

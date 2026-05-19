@@ -4,6 +4,7 @@ using JacksFitnessApp.Application.Commands.Metrics;
 
 namespace JacksFitnessApp.Application.Handlers.Metrics;
 
+
 public class DeleteBodyMetricHandler : IRequestHandler<DeleteBodyMetricCommand>
 {
     private readonly IBodyMetricRepository _repository;
@@ -13,6 +14,7 @@ public class DeleteBodyMetricHandler : IRequestHandler<DeleteBodyMetricCommand>
         _repository = repository;
     }
 
+    // Deletes a body metric after verifying ownership
     public async Task Handle(DeleteBodyMetricCommand request, CancellationToken cancellationToken)
     {
         var metric = await _repository.GetByIdAsync(request.Id)

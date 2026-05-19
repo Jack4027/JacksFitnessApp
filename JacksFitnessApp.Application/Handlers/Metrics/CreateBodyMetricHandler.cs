@@ -18,6 +18,7 @@ public class CreateBodyMetricHandler : IRequestHandler<CreateBodyMetricCommand, 
         _mapper = mapper;
     }
 
+    // Based upon the request dto, creates a new Body Metric entity to be passed and stored in the database
     public async Task<BodyMetricDto> Handle(CreateBodyMetricCommand request, CancellationToken cancellationToken)
     {
         var metric = new BodyMetric
