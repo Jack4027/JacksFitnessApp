@@ -1,71 +1,88 @@
-.pr-container {
-  padding: 24px;
-  max-width: 900px;
-  margin: 0 auto;
-}
+.page-header {
+  margin-bottom: 28px;
 
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 64px);
-}
+  h2 {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
 
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: calc(100vh - 64px);
-  gap: 16px;
-  color: #999;
-
-  mat-icon {
-    font-size: 64px;
-    width: 64px;
-    height: 64px;
+  p {
+    font-size: 13px;
+    color: var(--text-secondary);
   }
 }
 
 .pr-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
 }
 
 .pr-card {
-  mat-card-content {
-    padding: 16px;
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: border-color var(--transition);
+
+  &:hover {
+    border-color: rgba(255, 204, 0, 0.3);
   }
 }
 
-.pr-header {
+.pr-card-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .trophy {
-  color: #ff9800;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--accent-warning);
 }
 
-.exercise-name {
-  font-size: 14px;
+.pr-exercise {
+  font-size: 13px;
   font-weight: 500;
-  color: #333;
-  margin: 0;
+  color: var(--text-primary);
 }
 
-.pr-value {
-  font-size: 22px;
-  font-weight: 700;
-  color: #3f51b5;
-  margin: 0 0 4px;
+.pr-card-value {
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--accent-primary);
+  line-height: 1;
+  margin-bottom: 4px;
 }
 
-.pr-date {
+.pr-card-reps {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.pr-card-date {
   font-size: 12px;
-  color: #999;
-  margin: 0;
+  color: var(--text-muted);
+}
+
+.cta-btn {
+  padding: 10px 20px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition);
+
+  &:hover {
+    background: #ff6a2f;
+  }
 }

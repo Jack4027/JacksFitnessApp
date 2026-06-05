@@ -1,7 +1,7 @@
-using AutoMapper;
 using JacksFitnessApp.Application.Handlers.Training.Exercise;
 using JacksFitnessApp.Application.Interfaces;
 using JacksFitnessApp.Application.Mappings;
+using JacksFitnessApp.Domain.Interfaces.Coach;
 using JacksFitnessApp.Domain.Interfaces.Metrics;
 using JacksFitnessApp.Domain.Interfaces.Nutrition;
 using JacksFitnessApp.Domain.Interfaces.Training;
@@ -12,6 +12,7 @@ using JacksFitnessApp.Host.Endpoints.Training;
 using JacksFitnessApp.Host.Middleware;
 using JacksFitnessApp.Infrastructure.Data;
 using JacksFitnessApp.Infrastructure.Data.Seed;
+using JacksFitnessApp.Infrastructure.Repositories.Coach;
 using JacksFitnessApp.Infrastructure.Repositories.Metrics;
 using JacksFitnessApp.Infrastructure.Repositories.Nutrition;
 using JacksFitnessApp.Infrastructure.Repositories.Training;
@@ -27,7 +28,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Database
 builder.Services.AddDbContext<FitnessAppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null
+            );
+        }
+    ));
+
 
 // ASP.NET Identity
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -63,6 +75,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+// Coach repositories and services
+builder.Services.AddScoped<ICoachRepository, CoachRepository>();
+builder.Services.AddScoped<IUserContextService, UserContextService>();
+builder.Services.AddHttpClient<AnthropicService>();
+builder.Services.AddScoped<IAnthropicService, AnthropicService>();
+
 // Repositories
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IProgrammeRepository, ProgrammeRepository>();
@@ -80,25 +98,19 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(GetExercisesHandler).Assembly));
 
 // AutoMapper
-var loggerFactory = LoggerFactory.Create(builder =>
-{
-    builder.AddConsole();
-});
-var mapper = new MapperConfiguration(cfg =>
-{
-    cfg.AddMaps(typeof(FitnessProfile).Assembly);
-}, loggerFactory).CreateMapper();
-
-builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(typeof(FitnessProfile).Assembly);
 
 // CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "http://localhost:4200",
+            "https://calm-smoke-0800bf803-preview.westeurope.7.azurestaticapps.net"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 
@@ -168,5 +180,6 @@ app.MapWorkoutEndpoints();
 app.MapProgrammeEndpoints();
 app.MapNutritionEndpoints();
 app.MapBodyMetricEndpoints();
+app.MapCoachEndpoints();
 
 app.Run();

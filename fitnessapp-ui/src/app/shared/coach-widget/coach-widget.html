@@ -1,0 +1,116 @@
+<!-- Floating toggle button -->
+<button class="coach-fab" (click)="toggle()" [class.open]="isOpen" title="AI Coach">
+  <span class="fab-icon">{{ isOpen ? '✕' : '🤖' }}</span>
+  <span class="fab-label">Coach</span>
+</button>
+
+<!-- Widget panel -->
+<div class="coach-panel" [class.visible]="isOpen">
+  <div class="panel-header">
+    @if (view === 'chat') {
+      <button class="back-btn" (click)="backToList()">← Back</button>
+    }
+<span class="panel-title">
+  @if (view === 'list') {
+    AI Coach
+  }
+  @if (view === 'chat') {
+    @if (isEditingTitle) {
+      <input
+        class="title-input"
+        [(ngModel)]="titleInput"
+        (keydown.enter)="saveTitle()"
+        (keydown.escape)="cancelEditTitle()"
+        (blur)="saveTitle()"
+      />
+    } @else {
+      <span class="title-text" (click)="startEditTitle()" title="Click to rename">
+        {{ activeConversation?.title || 'New Chat' }}
+        <span class="edit-icon">✎</span>
+      </span>
+    }
+  }
+</span>
+    @if (view === 'list') {
+      <button class="new-btn" (click)="newConversation()" [disabled]="isCreating">
+        {{ isCreating ? '...' : '+ New' }}
+      </button>
+    }
+  </div>
+
+  <div class="panel-body">
+    <!-- Loading -->
+    @if (isListLoading) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+      </div>
+    }
+
+    <!-- Conversation list -->
+    @if (!isListLoading && view === 'list') {
+      <div class="convo-list">
+        @if (conversations.length === 0) {
+          <div class="empty-state">
+            <p>No conversations yet.</p>
+            <button class="start-btn" (click)="newConversation()">Start chatting</button>
+          </div>
+        }
+        @for (convo of conversations; track convo.id) {
+          <div class="convo-item" (click)="openConversation(convo)">
+            <div class="convo-info">
+              <span class="convo-title">{{ convo.title || 'Conversation ' + convo.id }}</span>
+              <span class="convo-date">{{ convo.updatedAt | date:'dd MMM' }}</span>
+            </div>
+            <button class="delete-btn" (click)="deleteConversation(convo.id, $event)">✕</button>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Chat view -->
+    @if (!isChatLoading && view === 'chat') {
+      <div class="chat-view">
+        <div class="messages">
+          @if (messages.length === 0) {
+            <div class="empty-chat">
+              <p>Ask your coach anything — workouts, nutrition, goals.</p>
+            </div>
+          }
+          @for (msg of messages; track msg.id) {
+            <div class="message" [class.user]="msg.isUserMessage" [class.coach]="!msg.isUserMessage">
+              <div class="bubble">
+                @if (!msg.isUserMessage) {
+                  <markdown [data]="msg.content"></markdown>
+                }
+                @if (msg.isUserMessage) {
+                  <span>{{ msg.content }}</span>
+                }
+              </div>
+            </div>
+          }
+          @if (isSending) {
+            <div class="message coach">
+              <div class="bubble typing">
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+          }
+          <div #messagesEnd></div>
+        </div>
+
+        <div class="input-area">
+          <textarea
+            [(ngModel)]="messageInput"
+            (keydown)="onKeyDown($event)"
+            placeholder="Message your coach... (Enter to send)"
+            rows="2"
+            [disabled]="isSending"
+          ></textarea>
+          <button class="send-btn" (click)="sendMessage()" [disabled]="isSending || !messageInput.trim()">
+            ↑
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>

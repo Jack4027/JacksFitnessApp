@@ -1,17 +1,41 @@
+:host {
+  display: block;
+  padding: 0 16px;
+}
+
+.food-search-wrapper {
+  position: relative;
+  margin-left: 16px;
+}
+
 .full-width {
   width: 100%;
 }
 
+.mat-mdc-form-field {
+  padding-left: 16px;
+}
+
+.mat-mdc-text-field-wrapper {
+  padding-left: 16px !important;
+}
+
+input.mat-mdc-input-element {
+  caret-color: #ff6b00 !important;
+  color: #e0e0e0 !important;
+}
+
+
 .food-option {
   display: flex;
   flex-direction: column;
-  padding: 4px 0;
+  padding: 6px 0;
 }
 
 .food-name {
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: #e0e0e0;
 }
 
 .food-brand {

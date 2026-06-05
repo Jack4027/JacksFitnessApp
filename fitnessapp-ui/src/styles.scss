@@ -1,39 +1,478 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
-@use '@angular/material' as mat;
+// ============================================================
+// Design tokens
+// ============================================================
 
-html {
-  height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$magenta-palette,
-        tertiary: mat.$violet-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
+:root {
+  --bg-primary: #0f0f0f;
+  --bg-surface: #1a1a1a;
+  --bg-elevated: #222222;
+  --bg-overlay: #2a2a2a;
+
+  --border-subtle: #2a2a2a;
+  --border-default: #333333;
+  --border-strong: #444444;
+
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --text-muted: #444444;
+
+  --accent-primary: #ff4d00;
+  --accent-secondary: #ff8c00;
+  --accent-success: #00ff88;
+  --accent-warning: #ffcc00;
+  --accent-info: #00d4ff;
+  --accent-danger: #ff3b3b;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --transition: 0.15s ease;
 }
 
-body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
+// Light theme overrides
+.light-theme {
+  --bg-primary: #f5f5f5;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f0f0f0;
+  --bg-overlay: #e8e8e8;
 
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
+  --border-subtle: #e8e8e8;
+  --border-default: #dddddd;
+  --border-strong: #cccccc;
 
-  // Reset the user agent margin.
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --text-muted: #aaaaaa;
+
+  --accent-success: #00aa55;
+}
+
+// ============================================================
+// Reset and base
+// ============================================================
+
+* {
+  box-sizing: border-box;
   margin: 0;
-  height: 100%;
+  padding: 0;
 }
-/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  height: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+// ============================================================
+// Typography
+// ============================================================
+
+h1, h2, h3, h4 {
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+h1 { font-size: 28px; }
+h2 { font-size: 22px; }
+h3 { font-size: 18px; }
+h4 { font-size: 15px; }
+
+p { color: var(--text-secondary); }
+
+// ============================================================
+// Angular Material overrides
+// ============================================================
+.mat-mdc-autocomplete-panel {
+  background-color: #1e1e1e !important;
+  border: 1px solid #333 !important;
+  border-radius: 8px !important;
+  z-index: 9999 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+.mdc-text-field__input{
+  padding-left: 16px !important;
+}
+
+.mat-mdc-option {
+  color: #e0e0e0 !important;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.mat-mdc-option:hover {
+  background-color: #2a2a2a !important;
+}
+.mat-mdc-card {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 0.5px solid var(--border-subtle) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: none !important;
+}
+
+.mat-mdc-card-title {
+  color: var(--text-primary) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+}
+
+.mat-mdc-card-subtitle {
+  color: var(--text-secondary) !important;
+  font-size: 13px !important;
+}
+
+.mat-toolbar {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 0.5px solid var(--border-subtle) !important;
+  height: 56px !important;
+}
+
+.mat-mdc-form-field {
+  .mdc-text-field {
+    background-color: var(--bg-elevated) !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: var(--border-subtle) !important;
+    }
+  }
+
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: var(--border-default) !important;
+    }
+  }
+
+  .mdc-text-field--focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: var(--accent-primary) !important;
+    }
+  }
+
+  input, textarea {
+    color: var(--text-primary) !important;
+    caret-color: var(--accent-primary) !important;
+  }
+
+  .mat-mdc-floating-label {
+    color: var(--text-secondary) !important;
+  }
+}
+
+.mat-mdc-select-value {
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-select-panel {
+  background-color: var(--bg-elevated) !important;
+  border: 0.5px solid var(--border-subtle) !important;
+}
+
+.mat-mdc-option {
+  color: var(--text-primary) !important;
+
+  &:hover {
+    background-color: var(--bg-overlay) !important;
+  }
+
+  &.mat-mdc-option-active {
+    background-color: var(--bg-overlay) !important;
+    color: var(--accent-primary) !important;
+  }
+}
+
+.mat-mdc-raised-button {
+  &.mat-primary {
+    background-color: var(--accent-primary) !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background-color: #ff6a2f !important;
+    }
+  }
+
+  &:not(.mat-primary) {
+    background-color: var(--bg-elevated) !important;
+    color: var(--text-primary) !important;
+    border: 0.5px solid var(--border-default) !important;
+  }
+}
+
+.mat-mdc-button {
+  color: var(--accent-primary) !important;
+}
+
+.mat-mdc-icon-button {
+  color: var(--text-secondary) !important;
+
+  &:hover {
+    color: var(--text-primary) !important;
+    background-color: var(--bg-elevated) !important;
+  }
+}
+
+.mat-mdc-snack-bar-container {
+  background-color: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border: 0.5px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.mat-mdc-tab-group {
+  .mat-mdc-tab-header {
+    border-bottom: 0.5px solid var(--border-subtle) !important;
+  }
+
+  .mat-mdc-tab {
+    color: var(--text-secondary) !important;
+
+    &.mdc-tab--active {
+      color: var(--text-primary) !important;
+    }
+  }
+
+  .mdc-tab-indicator__content--underline {
+    border-color: var(--accent-primary) !important;
+  }
+}
+
+.mat-mdc-progress-spinner circle {
+  stroke: var(--accent-primary) !important;
+}
+
+.mat-expansion-panel {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 0.5px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: none !important;
+  margin-bottom: 4px !important;
+}
+
+.mat-expansion-panel-header {
+  color: var(--text-primary) !important;
+
+  &:hover {
+    background-color: var(--bg-elevated) !important;
+  }
+}
+
+.mat-expansion-indicator::after {
+  color: var(--text-secondary) !important;
+}
+
+.mat-mdc-menu-panel {
+  background-color: var(--bg-elevated) !important;
+  border: 0.5px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.mat-mdc-menu-item {
+  color: var(--text-primary) !important;
+
+  &:hover {
+    background-color: var(--bg-overlay) !important;
+  }
+
+  .mat-icon {
+    color: var(--text-secondary) !important;
+  }
+}
+
+.mat-divider {
+  border-color: var(--border-subtle) !important;
+}
+
+.mat-mdc-chip {
+  background-color: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border: 0.5px solid var(--border-subtle) !important;
+}
+
+// ============================================================
+// Scrollbar
+// ============================================================
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+// ============================================================
+// Utility classes
+// ============================================================
+
+.accent { color: var(--accent-primary); }
+.accent-secondary { color: var(--accent-secondary); }
+.accent-success { color: var(--accent-success); }
+.accent-warning { color: var(--accent-warning); }
+.accent-info { color: var(--accent-info); }
+.accent-danger { color: var(--accent-danger); }
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+
+.surface { background-color: var(--bg-surface); }
+.elevated { background-color: var(--bg-elevated); }
+
+.spacer { flex: 1 1 auto; }
+
+.full-width { width: 100%; }
+
+.page-container {
+  padding: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.stat-card {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+
+  .stat-value {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--accent-primary);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+}
+
+.macro-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+
+  .macro-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    width: 52px;
+  }
+
+  .macro-track {
+    flex: 1;
+    height: 4px;
+    background: var(--bg-overlay);
+    border-radius: 2px;
+
+    .macro-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+  }
+
+  .macro-value {
+    font-size: 12px;
+    color: var(--text-secondary);
+    width: 36px;
+    text-align: right;
+  }
+}
+
+.pr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 204, 0, 0.1);
+  border: 0.5px solid rgba(255, 204, 0, 0.3);
+  color: var(--accent-warning);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  gap: 16px;
+  color: var(--text-muted);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: var(--text-muted);
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 56px);
+}
+
+.error-banner {
+  background: rgba(255, 59, 59, 0.1);
+  border: 0.5px solid rgba(255, 59, 59, 0.3);
+  color: var(--accent-danger);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  margin-bottom: 16px;
+}

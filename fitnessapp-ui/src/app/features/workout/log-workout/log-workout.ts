@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -32,7 +31,6 @@ import {
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatToolbarModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -137,9 +135,9 @@ export class LogWorkoutComponent implements OnInit {
       : this.exercises;
   }
 
-  getMuscleGroupLabel(value: number | null): string {
-  if (value === null) return 'Cardio';
-  return this.muscleGroups.find(mg => mg.value === value)?.label ?? '';
+getMuscleGroupLabel(exercise: Exercise): string {
+  if (exercise.type === ExerciseType.Cardio) return 'Cardio';
+  return this.muscleGroups.find(mg => mg.value === exercise.primaryMuscleGroup)?.label ?? '';
 }
 
   selectExercise(exercise: Exercise): void {
@@ -221,6 +219,28 @@ export class LogWorkoutComponent implements OnInit {
       }
     });
   }
+
+  deleteSet(setId: number): void {
+  this.trainingService.deleteWorkoutSet(setId).subscribe({
+    next: () => {
+      this.session!.sets = this.session!.sets.filter(s => s.id !== setId);
+      this.cdr.detectChanges();
+      this.snackBar.open('Set deleted', 'OK', { duration: 2000 });
+    },
+    error: () => this.snackBar.open('Failed to delete set', 'OK', { duration: 3000 })
+  });
+}
+
+deleteCardioSet(setId: number): void {
+  this.trainingService.deleteCardioSet(setId).subscribe({
+    next: () => {
+      this.session!.cardioSets = this.session!.cardioSets.filter(s => s.id !== setId);
+      this.cdr.detectChanges();
+      this.snackBar.open('Cardio set deleted', 'OK', { duration: 2000 });
+    },
+    error: () => this.snackBar.open('Failed to delete cardio set', 'OK', { duration: 3000 })
+  });
+}
 
   finishWorkout(): void {
     this.router.navigate(['/dashboard']);

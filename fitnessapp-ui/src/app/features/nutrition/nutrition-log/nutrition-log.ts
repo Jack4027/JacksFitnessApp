@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { FoodSearchComponent } from '../food-search/food-search';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,7 +15,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { NutritionService } from '../../../core/services/nutrition';
 import { NutritionLog, Meal, FoodItem, MealType } from '../../../models/nutrition.models';
-import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, switchMap, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-nutrition-log',
@@ -27,7 +27,6 @@ import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatToolbarModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -87,24 +86,32 @@ quantityForm = new FormGroup({
     this.loadTodayLog();
     this.setupFoodSearch();
   }
+private searchCache = new Map<string, FoodItem[]>();
 
-  setupFoodSearch(): void {
-    this.foodSearch$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(query => {
-        if (!query || query.length < 2) return [];
-        this.isSearching = true;
-        return this.nutritionService.searchFood(query);
-      })
-    ).subscribe({
-      next: results => {
-        this.foodSearchResults = results;
+setupFoodSearch(): void {
+  this.foodSearch$.pipe(
+    debounceTime(500),
+    distinctUntilChanged(),
+    switchMap(query => {
+      if (!query || query.length < 2) return of([]);
+      if (this.searchCache.has(query)) {
         this.isSearching = false;
-      },
-      error: () => this.isSearching = false
-    });
-  }
+        return of(this.searchCache.get(query)!);
+      }
+      this.isSearching = true;
+      return this.nutritionService.searchFood(query).pipe(
+        tap(results => this.searchCache.set(query, results))
+      );
+    })
+  ).subscribe({
+    next: results => {
+      this.foodSearchResults = results;
+      this.isSearching = false;
+      this.cdr.detectChanges();
+    },
+    error: () => this.isSearching = false
+  });
+}
 
 loadTodayLog(): void {
   this.nutritionService.getNutritionLogByDate(this.today).subscribe({
@@ -141,18 +148,23 @@ loadTodayLog(): void {
     });
   }
 
-  addMeal(): void {
-    if (!this.todayLog || this.mealForm.invalid) return;
+    addMeal(): void {
+      if (!this.todayLog || this.mealForm.invalid) return;
 
-    this.nutritionService.addMeal(this.todayLog.id, this.mealForm.value).subscribe({
-      next: meal => {
-        this.todayLog!.meals.push(meal);
-        this.mealForm.reset();
-        this.snackBar.open('Meal added', 'OK', { duration: 2000 });
-      },
-      error: () => this.snackBar.open('Failed to add meal', 'OK', { duration: 3000 })
-    });
-  }
+      const payload = {
+        name: this.mealForm.value.name,
+        type: Number(this.mealForm.value.type)
+      };
+
+      this.nutritionService.addMeal(this.todayLog.id, payload).subscribe({
+        next: meal => {
+          this.todayLog!.meals.push(meal);
+          this.mealForm.reset();
+          this.snackBar.open('Meal added', 'OK', { duration: 2000 });
+        },
+        error: () => this.snackBar.open('Failed to add meal', 'OK', { duration: 3000 })
+      });
+    }
 
   onFoodSearch(event: Event): void {
     const query = (event.target as HTMLInputElement).value;

@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TrainingService } from '../../../core/services/training';
 import { PersonalRecord } from '../../../models/training.models';
@@ -17,7 +16,6 @@ import { PersonalRecord } from '../../../models/training.models';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatToolbarModule,
     MatProgressSpinnerModule
   ],
   templateUrl: './personal-records.html',

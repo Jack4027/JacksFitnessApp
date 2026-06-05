@@ -41,6 +41,19 @@ public static class WorkoutEndpoints
             await mediator.Send(new DeleteWorkoutSessionCommand(id, userId));
             return Results.NoContent();
         });
+        group.MapDelete("/sets/{id}", async (int id, IMediator mediator, ClaimsPrincipal user) =>
+        {
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            await mediator.Send(new DeleteWorkoutSetCommand(id, userId));
+            return Results.NoContent();
+        });
+
+        group.MapDelete("/cardio/{id}", async (int id, IMediator mediator, ClaimsPrincipal user) =>
+        {
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            await mediator.Send(new DeleteCardioSetCommand(id, userId));
+            return Results.NoContent();
+        });
 
         group.MapPost("/{sessionId}/sets", async (
             int sessionId,

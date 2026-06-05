@@ -1,105 +1,118 @@
-<mat-toolbar color="primary">
-  <button mat-icon-button (click)="router.navigate(['/dashboard'])">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span>Workout history</span>
-</mat-toolbar>
-
-<div class="history-container">
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h2>Workout history</h2>
+      <p>All your logged sessions</p>
+    </div>
+  </div>
 
   @if (isLoading) {
   <div class="loading-container">
-    <mat-spinner></mat-spinner>
+    <mat-spinner diameter="36"></mat-spinner>
   </div>
   } @else if (workouts.length === 0) {
   <div class="empty-state">
     <mat-icon>fitness_center</mat-icon>
-    <p>No workouts logged yet.</p>
-    <button mat-raised-button color="primary"
-      (click)="router.navigate(['/workout'])">
+    <p>No workouts logged yet</p>
+    <button class="cta-btn" (click)="router.navigate(['/workout'])">
       Log your first workout
     </button>
   </div>
   } @else {
-  <mat-accordion>
+  <mat-accordion class="history-accordion">
     @for (workout of workouts; track workout.id) {
     <mat-expansion-panel>
       <mat-expansion-panel-header>
-        <mat-panel-title>{{ formatDate(workout.date) }}</mat-panel-title>
+        <mat-panel-title>
+          <div class="session-title">
+            <div class="session-icon">
+              <mat-icon>fitness_center</mat-icon>
+            </div>
+            <div>
+              <span class="session-date">{{ formatDate(workout.date) }}</span>
+              @if (workout.programmeDayName) {
+              <span class="session-programme">{{ workout.programmeDayName }}</span>
+              }
+            </div>
+          </div>
+        </mat-panel-title>
         <mat-panel-description>
-          {{ getTotalSets(workout) }} sets
-          @if (workout.durationMinutes) {
-            · {{ workout.durationMinutes }} min
-          }
-          @if (workout.programmeDayName) {
-            · {{ workout.programmeDayName }}
-          }
+          <div class="session-chips">
+            <span class="chip">{{ getTotalSets(workout) }} sets</span>
+            @if (workout.durationMinutes) {
+            <span class="chip">{{ workout.durationMinutes }} min</span>
+            }
+            @if (workout.sets.length > 0) {
+            <span class="chip accent-chip">Strength</span>
+            }
+            @if (workout.cardioSets.length > 0) {
+            <span class="chip info-chip">Cardio</span>
+            }
+          </div>
         </mat-panel-description>
       </mat-expansion-panel-header>
 
-      <div class="workout-detail">
+      <div class="session-detail">
         <p class="exercises-summary">
-          <strong>Exercises:</strong> {{ getUniqueExercises(workout).join(', ') }}
+          {{ getUniqueExercises(workout).join(', ') }}
         </p>
 
         @if (workout.sets.length > 0) {
-        <h4 class="section-label">Strength</h4>
-        <table class="sets-table">
-          <thead>
-            <tr>
-              <th>Exercise</th>
-              <th>Set</th>
-              <th>Reps</th>
-              <th>Weight</th>
-              <th>PR</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div class="sets-section">
+          <div class="sets-section-label">Strength</div>
+          <div class="sets-table">
+            <div class="sets-table-header">
+              <span>Exercise</span>
+              <span>Set</span>
+              <span>Reps</span>
+              <span>Weight</span>
+              <span>PR</span>
+            </div>
             @for (set of workout.sets; track set.id) {
-            <tr>
-              <td>{{ set.exercise.name }}</td>
-              <td>{{ set.setNumber }}</td>
-              <td>{{ set.repsCompleted }}</td>
-              <td>{{ set.weightKg }}kg</td>
-              <td>
+            <div class="sets-table-row">
+              <span class="exercise-name">{{ set.exercise.name }}</span>
+              <span>{{ set.setNumber }}</span>
+              <span>{{ set.repsCompleted }}</span>
+              <span class="accent">{{ set.weightKg }}kg</span>
+              <span>
                 @if (set.isPersonalRecord) {
-                <mat-icon class="pr-icon">emoji_events</mat-icon>
+                <span class="pr-badge">
+                  <mat-icon>emoji_events</mat-icon> PR
+                </span>
                 }
-              </td>
-            </tr>
+              </span>
+            </div>
             }
-          </tbody>
-        </table>
+          </div>
+        </div>
         }
 
         @if (workout.cardioSets.length > 0) {
-        <h4 class="section-label">Cardio</h4>
-        <table class="sets-table">
-          <thead>
-            <tr>
-              <th>Exercise</th>
-              <th>Duration</th>
-              <th>Distance</th>
-              <th>Avg HR</th>
-              <th>Calories</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div class="sets-section">
+          <div class="sets-section-label">Cardio</div>
+          <div class="sets-table">
+            <div class="sets-table-header">
+              <span>Exercise</span>
+              <span>Duration</span>
+              <span>Distance</span>
+              <span>Avg HR</span>
+              <span>Calories</span>
+            </div>
             @for (set of workout.cardioSets; track set.id) {
-            <tr>
-              <td>{{ set.exercise.name }}</td>
-              <td>{{ formatDuration(set.durationSeconds) }}</td>
-              <td>{{ set.distanceKm ?? '-' }}km</td>
-              <td>{{ set.avgHeartRate ?? '-' }}</td>
-              <td>{{ set.caloriesBurned ?? '-' }}</td>
-            </tr>
+            <div class="sets-table-row">
+              <span class="exercise-name">{{ set.exercise.name }}</span>
+              <span class="accent-info">{{ formatDuration(set.durationSeconds) }}</span>
+              <span>{{ set.distanceKm ?? '—' }}km</span>
+              <span>{{ set.avgHeartRate ?? '—' }}</span>
+              <span>{{ set.caloriesBurned ?? '—' }}</span>
+            </div>
             }
-          </tbody>
-        </table>
+          </div>
+        </div>
         }
 
         @if (workout.notes) {
-        <p class="notes"><strong>Notes:</strong> {{ workout.notes }}</p>
+        <p class="session-notes">{{ workout.notes }}</p>
         }
       </div>
 
@@ -107,5 +120,4 @@
     }
   </mat-accordion>
   }
-
 </div>

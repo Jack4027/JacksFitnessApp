@@ -57,6 +57,14 @@ export class TrainingService {
     return this.http.post<WorkoutSet>(`${this.apiUrl}/workouts/${sessionId}/sets`, set);
   }
 
+  deleteWorkoutSet(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/workouts/sets/${id}`);
+}
+
+deleteCardioSet(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/workouts/cardio/${id}`);
+}
+
   logCardioSet(sessionId: number, set: any): Observable<CardioSet> {
     return this.http.post<CardioSet>(`${this.apiUrl}/workouts/${sessionId}/cardio`, set);
   }

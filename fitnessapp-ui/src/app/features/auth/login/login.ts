@@ -9,20 +9,21 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { AuthService } from '../../../core/services/auth';
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
+imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatCardModule,
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
-    MatTabsModule
-  ],
+    MatTabsModule,
+    MatIcon
+],
   templateUrl: './login.html',
   styleUrl: './login.scss'
 })

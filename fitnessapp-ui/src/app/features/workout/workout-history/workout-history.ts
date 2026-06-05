@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
@@ -19,7 +18,6 @@ import { WorkoutSession, ExerciseType, MuscleGroup } from '../../../models/train
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatToolbarModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatDividerModule

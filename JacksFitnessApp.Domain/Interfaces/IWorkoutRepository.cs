@@ -15,4 +15,6 @@ public interface IWorkoutRepository
     Task<WorkoutSet?> GetPersonalRecordForExerciseAsync(string userId, int exerciseId);
     Task<CardioSet?> GetBestDistanceForExerciseAsync(string userId, int exerciseId);
     Task<CardioSet?> GetBestTimeForExerciseAsync(string userId, int exerciseId);
+    Task DeleteSetAsync(int id);
+    Task DeleteCardioSetAsync(int id);
 }

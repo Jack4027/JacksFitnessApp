@@ -1,93 +1,194 @@
-.spacer { flex: 1 1 auto; }
-
-.metrics-container {
-  padding: 24px;
-  max-width: 900px;
-  margin: 0 auto;
+.page-header {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+
+  h2 {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  p {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
 }
 
-.loading-container {
+.cta-btn {
   display: flex;
-  justify-content: center;
   align-items: center;
-  height: calc(100vh - 64px);
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: calc(100vh - 64px);
-  gap: 16px;
-  color: #999;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition);
 
   mat-icon {
-    font-size: 64px;
-    width: 64px;
-    height: 64px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: #ff6a2f;
   }
 }
 
-.form-card {
-  mat-card-content {
-    padding: 8px 16px 16px;
-  }
+.metric-form-card {
+  background: var(--bg-surface);
+  border: 0.5px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.form-section-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
 }
 
 .metric-form {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  margin-bottom: 12px;
+}
 
-  mat-form-field {
-    flex: 1;
-    min-width: 150px;
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 130px;
+
+  label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input {
+    background: var(--bg-elevated);
+    border: 0.5px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    color: var(--text-primary);
+    font-size: 14px;
+    width: 100%;
+    transition: border-color var(--transition);
+    outline: none;
+
+    &:focus {
+      border-color: var(--accent-primary);
+    }
+
+    &::placeholder {
+      color: var(--text-muted);
+    }
   }
 }
 
-.full-width {
+.notes-field {
   width: 100%;
   flex: unset;
+  margin-bottom: 16px;
+}
+
+.save-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition);
+
+  &:hover { background: #ff6a2f; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.metrics-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-chips {
+  display: flex;
+  gap: 6px;
+}
+
+.chip {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 0.5px solid var(--border-subtle);
+}
+
+.accent-chip {
+  background: rgba(255, 77, 0, 0.1);
+  color: var(--accent-primary);
+  border-color: rgba(255, 77, 0, 0.2);
 }
 
 .metric-detail {
   padding: 8px 0;
 }
 
-.metric-grid {
+.metric-detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 12px;
 }
 
-.metric-item {
-  background: #f9f9f9;
-  border-radius: 6px;
+.metric-detail-item {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
   padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.metric-label {
+.metric-detail-label {
   font-size: 11px;
-  color: #888;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin: 0 0 4px;
 }
 
-.metric-value {
+.metric-detail-value {
   font-size: 18px;
-  font-weight: 600;
-  color: #1a1a2e;
-  margin: 0;
+  font-weight: 500;
+  color: var(--accent-primary);
 }
 
-.notes {
-  font-size: 14px;
-  color: #555;
-  margin: 8px 0 0;
+.metric-notes {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
 }

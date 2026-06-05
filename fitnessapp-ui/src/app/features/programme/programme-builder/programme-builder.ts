@@ -5,7 +5,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -30,7 +29,6 @@ import {
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatToolbarModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -127,73 +125,95 @@ ngOnInit(): void {
 }
 
   createProgramme(): void {
-    if (this.programmeForm.invalid) return;
-    this.isSaving = true;
+  if (this.programmeForm.invalid) return;
+  this.isSaving = true;
 
-    this.trainingService.createProgramme(this.programmeForm.value).subscribe({
-      next: created => {
-        this.programme = created;
-        this.pageTitle = 'Edit programme';
-        this.isSaving = false;
-        this.cdr.detectChanges();
-        this.snackBar.open('Programme created', 'OK', { duration: 2000 });
-      },
-      error: () => {
-        this.isSaving = false;
-        this.snackBar.open('Failed to create programme', 'OK', { duration: 3000 });
-      }
-    });
-  }
+  const payload = {
+    ...this.programmeForm.value,
+    goal: Number(this.programmeForm.value.goal)
+  };
 
-  addWeek(): void {
-    if (!this.programme || this.weekForm.invalid) return;
+  this.trainingService.createProgramme(payload).subscribe({
+    next: created => {
+      this.programme = created;
+      this.pageTitle = 'Edit programme';
+      this.isSaving = false;
+      this.cdr.detectChanges();
+      this.snackBar.open('Programme created', 'OK', { duration: 2000 });
+    },
+    error: () => {
+      this.isSaving = false;
+      this.snackBar.open('Failed to create programme', 'OK', { duration: 3000 });
+    }
+  });
+}
+addWeek(): void {
+  if (!this.programme || this.weekForm.invalid) return;
 
-    this.trainingService.addProgrammeWeek(this.programme.id, this.weekForm.value).subscribe({
-      next: week => {
-        this.programme!.weeks.push({ ...week, days: [] });
-        this.weekForm.patchValue({ weekNumber: this.programme!.weeks.length + 1 });
-        this.snackBar.open('Week added', 'OK', { duration: 2000 });
-      },
-      error: () => this.snackBar.open('Failed to add week', 'OK', { duration: 3000 })
-    });
-  }
+  const payload = {
+    ...this.weekForm.value,
+    weekNumber: Number(this.weekForm.value.weekNumber)
+  };
 
-  addDay(weekId: number): void {
-    if (this.dayForm.invalid) return;
+  this.trainingService.addProgrammeWeek(this.programme.id, payload).subscribe({
+    next: week => {
+      this.programme!.weeks.push({ ...week, days: [] });
+      this.weekForm.patchValue({ weekNumber: this.programme!.weeks.length + 1 });
+      this.snackBar.open('Week added', 'OK', { duration: 2000 });
+    },
+    error: () => this.snackBar.open('Failed to add week', 'OK', { duration: 3000 })
+  });
+}
 
-    this.trainingService.addProgrammeDay(weekId, this.dayForm.value).subscribe({
-      next: day => {
-        const week = this.programme!.weeks.find(w => w.id === weekId);
-        if (week) week.days.push({ ...day, plannedExercises: [] });
-        this.dayForm.reset({ orderIndex: (week?.days.length ?? 0) + 1 });
-        this.selectedWeekId = null;
-        this.snackBar.open('Day added', 'OK', { duration: 2000 });
-      },
-      error: () => this.snackBar.open('Failed to add day', 'OK', { duration: 3000 })
-    });
-  }
+addDay(weekId: number): void {
+  if (this.dayForm.invalid) return;
 
-  addExercise(dayId: number): void {
-    if (this.exerciseForm.invalid) return;
+  const week = this.programme!.weeks.find(w => w.id === weekId);
 
-    this.trainingService.addPlannedExercise(dayId, this.exerciseForm.value).subscribe({
-      next: planned => {
-        const day = this.programme!.weeks
-          .flatMap(w => w.days)
-          .find(d => d.id === dayId);
-        if (day) day.plannedExercises.push(planned);
-        this.selectedDayId = null;
-        this.exerciseForm.reset({
-          targetSets: 3,
-          targetRepsMin: 8,
-          targetRepsMax: 12,
-          orderIndex: (day?.plannedExercises.length ?? 0) + 1
-        });
-        this.snackBar.open('Exercise added', 'OK', { duration: 2000 });
-      },
-      error: () => this.snackBar.open('Failed to add exercise', 'OK', { duration: 3000 })
-    });
-  }
+  const payload = {
+    ...this.dayForm.value,
+    orderIndex: Number(this.dayForm.value.orderIndex)
+  };
+
+  this.trainingService.addProgrammeDay(weekId, payload).subscribe({
+    next: day => {
+      if (week) week.days.push({ ...day, plannedExercises: [] });
+      this.dayForm.reset({ orderIndex: (week?.days.length ?? 0) + 1 });
+      this.selectedWeekId = null;
+      this.snackBar.open('Day added', 'OK', { duration: 2000 });
+    },
+    error: () => this.snackBar.open('Failed to add day', 'OK', { duration: 3000 })
+  });
+}
+
+    addExercise(dayId: number): void {
+      if (this.exerciseForm.invalid) return;
+
+      const payload = {
+        ...this.exerciseForm.value,
+        exerciseId: Number(this.exerciseForm.value.exerciseId),
+        orderIndex: Number(this.exerciseForm.value.orderIndex),
+        notes: this.exerciseForm.value.notes ?? ''
+      };
+
+      this.trainingService.addPlannedExercise(dayId, payload).subscribe({
+        next: planned => {
+          const day = this.programme!.weeks
+            .flatMap(w => w.days)
+            .find(d => d.id === dayId);
+          if (day) day.plannedExercises.push(planned);
+          this.selectedDayId = null;
+          this.exerciseForm.reset({
+            targetSets: 3,
+            targetRepsMin: 8,
+            targetRepsMax: 12,
+            orderIndex: (day?.plannedExercises.length ?? 0) + 1
+          });
+          this.snackBar.open('Exercise added', 'OK', { duration: 2000 });
+        },
+        error: () => this.snackBar.open('Failed to add exercise', 'OK', { duration: 3000 })
+      });
+    }
 
   getExerciseName(id: number): string {
     return this.exercises.find(e => e.id === id)?.name ?? '';

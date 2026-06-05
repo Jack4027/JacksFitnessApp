@@ -1,180 +1,166 @@
-<mat-toolbar color="primary">
-  <button mat-icon-button (click)="router.navigate(['/dashboard'])">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span>Nutrition — {{ today }}</span>
-</mat-toolbar>
-
-<div class="nutrition-container">
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h2>Nutrition</h2>
+      <p>{{ today }}</p>
+    </div>
+  </div>
 
   @if (isLoading) {
   <div class="loading-container">
-    <mat-spinner></mat-spinner>
+    <mat-spinner diameter="36"></mat-spinner>
   </div>
   } @else if (errorMessage) {
-<div class="error-banner">{{ errorMessage }}</div>
-} @else if (!todayLog) {
+  <div class="error-banner">{{ errorMessage }}</div>
+  } @else if (!todayLog) {
   <div class="empty-state">
     <mat-icon>restaurant</mat-icon>
-    <p>No nutrition log for today yet.</p>
-    <button mat-raised-button color="primary"
-      [disabled]="isCreatingLog"
-      (click)="createTodayLog()">
+    <p>No nutrition log for today yet</p>
+    <button class="cta-btn" [disabled]="isCreatingLog" (click)="createTodayLog()">
       Start today's log
     </button>
   </div>
   } @else {
 
   <!-- Daily totals -->
-  <mat-card class="totals-card">
-    <mat-card-content>
-      <div class="totals-row">
-        <div class="total-item">
-          <p class="total-label">Calories</p>
-          <p class="total-value">{{ round(todayLog.totalCalories) }}</p>
-        </div>
-        <div class="total-item">
-          <p class="total-label">Protein</p>
-          <p class="total-value">{{ round(todayLog.totalProtein) }}g</p>
-        </div>
-        <div class="total-item">
-          <p class="total-label">Carbs</p>
-          <p class="total-value">{{ round(todayLog.totalCarbs) }}g</p>
-        </div>
-        <div class="total-item">
-          <p class="total-label">Fat</p>
-          <p class="total-value">{{ round(todayLog.totalFat) }}g</p>
-        </div>
+  <div class="totals-card">
+    <div class="totals-row">
+      <div class="total-item">
+        <div class="total-value">{{ round(todayLog.totalCalories) }}</div>
+        <div class="total-label">Calories</div>
       </div>
-    </mat-card-content>
-  </mat-card>
+      <div class="total-divider"></div>
+      <div class="total-item">
+        <div class="total-value accent">{{ round(todayLog.totalProtein) }}g</div>
+        <div class="total-label">Protein</div>
+      </div>
+      <div class="total-divider"></div>
+      <div class="total-item">
+        <div class="total-value accent-secondary">{{ round(todayLog.totalCarbs) }}g</div>
+        <div class="total-label">Carbs</div>
+      </div>
+      <div class="total-divider"></div>
+      <div class="total-item">
+        <div class="total-value accent-warning">{{ round(todayLog.totalFat) }}g</div>
+        <div class="total-label">Fat</div>
+      </div>
+    </div>
+  </div>
 
   <!-- Meals -->
   @for (meal of todayLog.meals; track meal.id) {
-  <mat-card class="meal-card">
-<mat-card-header>
-  <mat-card-title>{{ meal.name }}</mat-card-title>
-  <mat-card-subtitle>
-    {{ round(meal.totalCalories) }} kcal ·
-    P: {{ round(meal.totalProtein) }}g ·
-    C: {{ round(meal.totalCarbs) }}g ·
-    F: {{ round(meal.totalFat) }}g
-  </mat-card-subtitle>
-  <span class="spacer"></span>
-  <button mat-icon-button color="warn" (click)="deleteMeal(meal.id)">
-    <mat-icon>delete</mat-icon>
-  </button>
-</mat-card-header>
-    <mat-card-content>
-
-      @if (meal.items.length > 0) {
-      <table class="items-table">
-        <thead>
-          <tr>
-            <th>Food</th>
-            <th>Qty</th>
-            <th>Kcal</th>
-            <th>P</th>
-            <th>C</th>
-            <th>F</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of meal.items; track item.id) {
-          <tr>
-            <td>{{ item.foodItem.name }}</td>
-            <td>{{ item.quantityGrams }}g</td>
-            <td>{{ round(item.calories) }}</td>
-            <td>{{ round(item.protein) }}g</td>
-            <td>{{ round(item.carbs) }}g</td>
-            <td>{{ round(item.fat) }}g</td>
-            <td>
-              <button mat-icon-button color="warn"
-                (click)="deleteMealItem(meal.id, item.id, item.calories, item.protein, item.carbs, item.fat)">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-      }
-
-      <!-- Add food to this meal -->
-      @if (selectedMealId === meal.id) {
-      <mat-divider class="divider"></mat-divider>
-      <div class="add-food-form">
-<app-food-search (foodSelected)="selectFood($event)"></app-food-search>
-
-        @if (selectedFood) {
-        <div class="selected-food">
-          <p class="food-name">{{ selectedFood.name }}</p>
-          <p class="food-macros">
-            {{ selectedFood.caloriesPer100g }} kcal ·
-            P: {{ selectedFood.proteinPer100g }}g ·
-            C: {{ selectedFood.carbsPer100g }}g ·
-            F: {{ selectedFood.fatPer100g }}g
-            per 100g
-          </p>
-          <div class="quantity-row">
-            <mat-form-field appearance="outline" class="quantity-field">
-              <mat-label>Quantity (g)</mat-label>
-              <input matInput type="number"
-                [formControl]="quantityForm.controls['quantityGrams']" />
-            </mat-form-field>
-            <button mat-raised-button color="primary"
-              [disabled]="quantityForm.invalid"
-              (click)="addMealItem(meal.id)">
-              Add
-            </button>
-          </div>
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-title-row">
+        <span class="meal-name">{{ meal.name }}</span>
+        <div class="meal-actions">
+          <span class="meal-cals">{{ round(meal.totalCalories) }} kcal</span>
+          <button class="delete-btn" (click)="deleteMeal(meal.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
         </div>
-        }
-
-        <button mat-button (click)="selectedMealId = null; selectedFood = null">
-          Cancel
-        </button>
       </div>
-      } @else {
-      <button mat-button color="primary"
-        (click)="selectedMealId = meal.id">
-        <mat-icon>add</mat-icon> Add food
-      </button>
+      <div class="meal-macros">
+        P {{ round(meal.totalProtein) }}g ·
+        C {{ round(meal.totalCarbs) }}g ·
+        F {{ round(meal.totalFat) }}g
+      </div>
+    </div>
+
+    @if (meal.items.length > 0) {
+    <div class="items-table">
+      <div class="items-table-header">
+        <span>Food</span>
+        <span>Qty</span>
+        <span>Kcal</span>
+        <span>P</span>
+        <span>C</span>
+        <span>F</span>
+        <span></span>
+      </div>
+      @for (item of meal.items; track item.id) {
+      <div class="items-table-row">
+        <span class="food-name">{{ item.foodItem.name }}</span>
+        <span>{{ item.quantityGrams }}g</span>
+        <span>{{ round(item.calories) }}</span>
+        <span class="accent">{{ round(item.protein) }}g</span>
+        <span class="accent-secondary">{{ round(item.carbs) }}g</span>
+        <span class="accent-warning">{{ round(item.fat) }}g</span>
+        <span>
+          <button class="delete-set-btn"
+            (click)="deleteMealItem(meal.id, item.id, item.calories, item.protein, item.carbs, item.fat)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      </div>
+      }
+    </div>
+    }
+
+    @if (selectedMealId === meal.id) {
+    <div class="add-food-section">
+      <app-food-search (foodSelected)="selectFood($event)"></app-food-search>
+
+      @if (selectedFood) {
+      <div class="selected-food-card">
+        <div class="selected-food-info">
+          <span class="selected-food-name">{{ selectedFood.name }}</span>
+          <span class="selected-food-macros">
+            {{ selectedFood.caloriesPer100g }} kcal ·
+            P {{ selectedFood.proteinPer100g }}g ·
+            C {{ selectedFood.carbsPer100g }}g ·
+            F {{ selectedFood.fatPer100g }}g
+            per 100g
+          </span>
+        </div>
+        <div class="quantity-row">
+          <div class="form-field">
+            <label>Quantity (g)</label>
+            <input type="number" [formControl]="$any(quantityForm.get('quantityGrams'))"
+              placeholder="100" />
+          </div>
+          <button class="add-food-btn" [disabled]="quantityForm.invalid"
+            (click)="addMealItem(meal.id)">
+            Add
+          </button>
+        </div>
+      </div>
       }
 
-    </mat-card-content>
-  </mat-card>
+      <button class="cancel-btn" (click)="selectedMealId = null; selectedFood = null">
+        Cancel
+      </button>
+    </div>
+    } @else {
+    <button class="add-food-btn-inline" (click)="selectedMealId = meal.id">
+      <mat-icon>add</mat-icon>
+      Add food
+    </button>
+    }
+  </div>
   }
 
-  <!-- Add meal form -->
-  <mat-card class="add-meal-card">
-    <mat-card-header>
-      <mat-card-title>Add meal</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form [formGroup]="mealForm" class="meal-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Meal name</mat-label>
-          <input matInput formControlName="name" />
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Type</mat-label>
-          <mat-select formControlName="type">
-            @for (type of mealTypes; track type.value) {
-            <mat-option [value]="type.value">{{ type.label }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-        <button mat-raised-button color="primary"
-          [disabled]="mealForm.invalid"
-          (click)="addMeal()">
-          Add meal
-        </button>
-      </form>
-    </mat-card-content>
-  </mat-card>
+  <!-- Add meal -->
+  <div class="add-meal-card">
+    <div class="form-section-label">Add meal</div>
+    <form [formGroup]="mealForm" class="add-meal-form">
+      <div class="form-field">
+        <label>Meal name</label>
+        <input type="text" formControlName="name" placeholder="e.g. Breakfast" />
+      </div>
+      <div class="form-field">
+        <label>Type</label>
+        <select formControlName="type" class="select-input">
+          @for (type of mealTypes; track type.value) {
+          <option [value]="type.value">{{ type.label }}</option>
+          }
+        </select>
+      </div>
+      <button class="cta-btn" [disabled]="mealForm.invalid" (click)="addMeal()">
+        Add meal
+      </button>
+    </form>
+  </div>
 
   }
-
 </div>

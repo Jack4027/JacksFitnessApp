@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
@@ -19,7 +18,6 @@ import { Programme, ProgrammeGoal } from '../../../models/training.models';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatToolbarModule,
     MatProgressSpinnerModule,
     MatChipsModule,
     MatSnackBarModule

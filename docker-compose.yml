@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: jacksfitnessapp-db
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "${SA_PASSWORD}"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -Q 'SELECT 1' -No"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jacksfitnessapp-api
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=JacksFitnessApp;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__Issuer: "JacksFitnessApp"
+      Jwt__Audience: "JacksFitnessAppClient"
+      Jwt__ExpiryMinutes: "60"
+      ASPNETCORE_ENVIRONMENT: "Production"
+      Anthropic__ApiKey: "${ANTHROPIC_API_KEY}"
+    ports:
+      - "8080:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./fitnessapp-ui
+      dockerfile: Dockerfile
+    container_name: jacksfitnessapp-ui
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  sqlserver_data:

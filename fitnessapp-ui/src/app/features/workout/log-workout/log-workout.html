@@ -1,202 +1,226 @@
-<mat-toolbar color="primary">
-  <button mat-icon-button (click)="router.navigate(['/dashboard'])">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span>Log workout</span>
-  <span class="spacer"></span>
-  @if (session) {
-  <button mat-button (click)="finishWorkout()">Finish</button>
-  }
-</mat-toolbar>
-
-<div class="workout-container">
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h2>Log workout</h2>
+      <p>{{ session ? 'Session in progress' : 'Start a new session to begin logging' }}</p>
+    </div>
+    @if (session) {
+    <button class="finish-btn" (click)="finishWorkout()">
+      <mat-icon>check</mat-icon>
+      Finish session
+    </button>
+    }
+  </div>
 
   @if (!session) {
-  <mat-card class="start-card">
-    <mat-card-header>
-      <mat-card-title>Start a new session</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
+  <div class="start-session-card">
+    <div class="start-session-icon">
+      <mat-icon>fitness_center</mat-icon>
+    </div>
+    <div class="start-session-content">
+      <h3>Ready to train?</h3>
+      <p>Start a session to begin logging your sets</p>
       <form [formGroup]="sessionForm" class="session-form">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Notes (optional)</mat-label>
-          <textarea matInput formControlName="notes" rows="2"></textarea>
+        <mat-form-field appearance="outline">
+          <mat-label>Session notes (optional)</mat-label>
+          <input matInput formControlName="notes" />
         </mat-form-field>
       </form>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary"
-        [disabled]="isCreatingSession" (click)="startSession()">
+      <button class="start-btn" [disabled]="isCreatingSession" (click)="startSession()">
         @if (isCreatingSession) {
-          <mat-spinner diameter="20"></mat-spinner>
+          <mat-spinner diameter="18"></mat-spinner>
         } @else {
+          <mat-icon>play_arrow</mat-icon>
           Start session
         }
       </button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+  </div>
   } @else {
 
   <div class="workout-layout">
 
-    <!-- Exercise selection panel -->
+    <!-- Exercise panel -->
     <div class="exercise-panel">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Exercises</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Filter by muscle group</mat-label>
-            <mat-select (selectionChange)="filterByMuscleGroup($event.value)">
-              <mat-option [value]="null">All</mat-option>
-              @for (mg of muscleGroups; track mg.value) {
-              <mat-option [value]="mg.value">{{ mg.label }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+      <div class="panel-header">
+        <span class="panel-title">Exercises</span>
+        <span class="exercise-count">{{ filteredExercises.length }}</span>
+      </div>
 
-          <div class="exercise-list">
-            @for (exercise of filteredExercises; track exercise.id) {
-            <div class="exercise-item"
-              [class.selected]="selectedExercise?.id === exercise.id"
-              (click)="selectExercise(exercise)">
-              <span class="exercise-name">{{ exercise.name }}</span>
-              <span class="exercise-meta">{{ getMuscleGroupLabel(exercise.primaryMuscleGroup) }}</span>
-            </div>
-            }
+      <mat-form-field appearance="outline" class="full-width filter-field">
+        <mat-label>Filter by muscle group</mat-label>
+        <mat-select (selectionChange)="filterByMuscleGroup($event.value)">
+          <mat-option [value]="null">All muscles</mat-option>
+          @for (mg of muscleGroups; track mg.value) {
+          <mat-option [value]="mg.value">{{ mg.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div class="exercise-list">
+        @for (exercise of filteredExercises; track exercise.id) {
+        <div class="exercise-item"
+          [class.selected]="selectedExercise?.id === exercise.id"
+          (click)="selectExercise(exercise)">
+          <div class="exercise-item-icon"
+            [class.cardio]="exercise.type === ExerciseType.Cardio">
+            <mat-icon>{{ exercise.type === ExerciseType.Cardio ? 'directions_run' : 'fitness_center' }}</mat-icon>
           </div>
-        </mat-card-content>
-      </mat-card>
+          <div class="exercise-item-info">
+            <span class="exercise-item-name">{{ exercise.name }}</span>
+            <span class="exercise-item-meta">{{ getMuscleGroupLabel(exercise) }}</span>
+          </div>
+          @if (getSetsForExercise(exercise.id).length + getCardioSetsForExercise(exercise.id).length > 0) {
+          <span class="sets-done">
+            {{ getSetsForExercise(exercise.id).length + getCardioSetsForExercise(exercise.id).length }}
+          </span>
+          }
+        </div>
+        }
+      </div>
     </div>
 
-    <!-- Set logging panel -->
+    <!-- Logging panel -->
     <div class="logging-panel">
-      @if (selectedExercise) {
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>{{ selectedExercise.name }}</mat-card-title>
-          <mat-card-subtitle>
-            {{ selectedExercise.type === ExerciseType.Strength ? 'Strength' : 'Cardio' }}
-          </mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-
-          @if (selectedExercise.type === ExerciseType.Strength) {
-          <form [formGroup]="setForm" class="set-form">
-            <div class="form-row">
-              <mat-form-field appearance="outline">
-                <mat-label>Set #</mat-label>
-                <input matInput type="number" formControlName="setNumber" />
-              </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Reps</mat-label>
-                <input matInput type="number" formControlName="repsCompleted" />
-              </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Weight (kg)</mat-label>
-                <input matInput type="number" formControlName="weightKg" step="0.5" />
-              </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Rest (sec)</mat-label>
-                <input matInput type="number" formControlName="restSeconds" />
-              </mat-form-field>
-            </div>
-            <button mat-raised-button color="primary"
-              [disabled]="setForm.invalid || isLoggingSet"
-              (click)="logSet()">
-              Log set
-            </button>
-          </form>
-
-          <!-- Logged sets -->
-          @if (getSetsForExercise(selectedExercise.id).length > 0) {
-          <mat-divider class="divider"></mat-divider>
-          <table class="sets-table">
-            <thead>
-              <tr>
-                <th>Set</th>
-                <th>Reps</th>
-                <th>Weight</th>
-                <th>PR</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (set of getSetsForExercise(selectedExercise.id); track set.id) {
-              <tr>
-                <td>{{ set.setNumber }}</td>
-                <td>{{ set.repsCompleted }}</td>
-                <td>{{ set.weightKg }}kg</td>
-                <td>
-                  @if (set.isPersonalRecord) {
-                  <mat-icon class="pr-icon">emoji_events</mat-icon>
-                  }
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-          }
-          }
-
-          @if (selectedExercise.type === ExerciseType.Cardio) {
-          <form [formGroup]="cardioSetForm" class="set-form">
-            <div class="form-row">
-              <mat-form-field appearance="outline">
-                <mat-label>Duration (min)</mat-label>
-                <input matInput type="number" formControlName="durationSeconds" />
-              </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Distance (km)</mat-label>
-                <input matInput type="number" formControlName="distanceKm" step="0.1" />
-              </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Avg HR</mat-label>
-                <input matInput type="number" formControlName="avgHeartRate" />
-              </mat-form-field>
-              <mat-form-field appearance="outline">
-                <mat-label>Calories</mat-label>
-                <input matInput type="number" formControlName="caloriesBurned" />
-              </mat-form-field>
-            </div>
-            <button mat-raised-button color="primary"
-              [disabled]="isLoggingSet"
-              (click)="logCardioSet()">
-              Log cardio
-            </button>
-          </form>
-
-          @if (getCardioSetsForExercise(selectedExercise.id).length > 0) {
-          <mat-divider class="divider"></mat-divider>
-          <table class="sets-table">
-            <thead>
-              <tr>
-                <th>Set</th>
-                <th>Duration</th>
-                <th>Distance</th>
-                <th>Avg HR</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (set of getCardioSetsForExercise(selectedExercise.id); track set.id) {
-              <tr>
-                <td>{{ set.setNumber }}</td>
-                <td>{{ formatDuration(set.durationSeconds) }}</td>
-                <td>{{ set.distanceKm ?? '-' }}km</td>
-                <td>{{ set.avgHeartRate ?? '-' }}</td>
-              </tr>
-              }
-            </tbody>
-          </table>
-          }
-          }
-
-        </mat-card-content>
-      </mat-card>
-      } @else {
+      @if (!selectedExercise) {
       <div class="select-prompt">
-        <mat-icon>fitness_center</mat-icon>
-        <p>Select an exercise to start logging sets</p>
+        <mat-icon>touch_app</mat-icon>
+        <p>Select an exercise to start logging</p>
+      </div>
+      } @else {
+      <div class="logging-card">
+        <div class="logging-header">
+          <div>
+            <h3>{{ selectedExercise.name }}</h3>
+            <span class="exercise-type-badge"
+              [class.cardio]="selectedExercise.type === ExerciseType.Cardio">
+              {{ selectedExercise.type === ExerciseType.Cardio ? 'Cardio' : 'Strength' }}
+            </span>
+          </div>
+        </div>
+
+        @if (selectedExercise.type === ExerciseType.Strength) {
+        <form [formGroup]="setForm" class="set-form">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Set</label>
+              <input type="number" formControlName="setNumber" />
+            </div>
+            <div class="form-field">
+              <label>Reps</label>
+              <input type="number" formControlName="repsCompleted" placeholder="0" />
+            </div>
+            <div class="form-field">
+              <label>Weight (kg)</label>
+              <input type="number" formControlName="weightKg" step="0.5" placeholder="0" />
+            </div>
+            <div class="form-field">
+              <label>Rest (sec)</label>
+              <input type="number" formControlName="restSeconds" placeholder="—" />
+            </div>
+          </div>
+          <button class="log-btn" [disabled]="setForm.invalid || isLoggingSet" (click)="logSet()">
+            @if (isLoggingSet) {
+              <mat-spinner diameter="18"></mat-spinner>
+            } @else {
+              <mat-icon>add</mat-icon>
+              Log set
+            }
+          </button>
+        </form>
+
+        @if (getSetsForExercise(selectedExercise.id).length > 0) {
+        <div class="sets-log">
+          <div class="sets-log-header">
+            <span>Set</span>
+            <span>Reps</span>
+            <span>Weight</span>
+            <span>Rest</span>
+            <span>PR</span>
+            <span></span>
+          </div>
+          @for (set of getSetsForExercise(selectedExercise.id); track set.id) {
+          <div class="sets-log-row">
+            <span>{{ set.setNumber }}</span>
+            <span>{{ set.repsCompleted }}</span>
+            <span class="accent">{{ set.weightKg }}kg</span>
+            <span>{{ set.restSeconds ?? '—' }}s</span>
+            <span>
+              @if (set.isPersonalRecord) {
+              <span class="pr-badge">
+                <mat-icon>emoji_events</mat-icon> PR
+              </span>
+              }
+            </span>
+            <span>
+              <button class="delete-set-btn" (click)="deleteSet(set.id)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </span>
+          </div>
+          }
+        </div>
+        }
+        }
+
+        @if (selectedExercise.type === ExerciseType.Cardio) {
+        <form [formGroup]="cardioSetForm" class="set-form">
+          <div class="form-row">
+            <div class="form-field">
+              <label>Duration (min)</label>
+              <input type="number" formControlName="durationSeconds" placeholder="0" />
+            </div>
+            <div class="form-field">
+              <label>Distance (km)</label>
+              <input type="number" formControlName="distanceKm" step="0.1" placeholder="0" />
+            </div>
+            <div class="form-field">
+              <label>Avg HR</label>
+              <input type="number" formControlName="avgHeartRate" placeholder="—" />
+            </div>
+            <div class="form-field">
+              <label>Calories</label>
+              <input type="number" formControlName="caloriesBurned" placeholder="—" />
+            </div>
+          </div>
+          <button class="log-btn cardio" [disabled]="isLoggingSet" (click)="logCardioSet()">
+            @if (isLoggingSet) {
+              <mat-spinner diameter="18"></mat-spinner>
+            } @else {
+              <mat-icon>add</mat-icon>
+              Log cardio
+            }
+          </button>
+        </form>
+
+        @if (getCardioSetsForExercise(selectedExercise.id).length > 0) {
+        <div class="sets-log">
+          <div class="sets-log-header">
+            <span>Set</span>
+            <span>Duration</span>
+            <span>Distance</span>
+            <span>Avg HR</span>
+            <span>Cals</span>
+            <span></span>
+          </div>
+          @for (set of getCardioSetsForExercise(selectedExercise.id); track set.id) {
+          <div class="sets-log-row">
+            <span>{{ set.setNumber }}</span>
+            <span class="accent-info">{{ formatDuration(set.durationSeconds) }}</span>
+            <span>{{ set.distanceKm ?? '—' }}km</span>
+            <span>{{ set.avgHeartRate ?? '—' }}</span>
+            <span>{{ set.caloriesBurned ?? '—' }}</span>
+            <span>
+              <button class="delete-set-btn" (click)="deleteCardioSet(set.id)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </span>
+          </div>
+          }
+        </div>
+        }
+        }
+
       </div>
       }
     </div>

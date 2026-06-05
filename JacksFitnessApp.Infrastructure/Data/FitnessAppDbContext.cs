@@ -1,4 +1,5 @@
-﻿using JacksFitnessApp.Domain.Entities.Metrics;
+﻿using JacksFitnessApp.Domain.Entities.Coach;
+using JacksFitnessApp.Domain.Entities.Metrics;
 using JacksFitnessApp.Domain.Entities.Nutrition;
 using JacksFitnessApp.Domain.Entities.Training;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -28,6 +29,9 @@ public class FitnessAppDbContext : IdentityDbContext
 
     // Metrics
     public DbSet<BodyMetric> BodyMetrics { get; set; }
+
+    public DbSet<CoachConversation> CoachConversations { get; set; }
+    public DbSet<CoachMessage> CoachMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

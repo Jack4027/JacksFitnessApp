@@ -59,6 +59,21 @@ public class WorkoutRepository : IWorkoutRepository
             await _context.SaveChangesAsync();
         }
     }
+    public async Task DeleteSetAsync(int id)
+    {
+        var set = await _context.WorkoutSets.FindAsync(id)
+            ?? throw new KeyNotFoundException($"Workout set {id} not found");
+        _context.WorkoutSets.Remove(set);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteCardioSetAsync(int id)
+    {
+        var set = await _context.CardioSets.FindAsync(id)
+            ?? throw new KeyNotFoundException($"Cardio set {id} not found");
+        _context.CardioSets.Remove(set);
+        await _context.SaveChangesAsync();
+    }
 
     public async Task<WorkoutSet> AddSetAsync(WorkoutSet set)
     {

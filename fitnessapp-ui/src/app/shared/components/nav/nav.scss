@@ -1,0 +1,150 @@
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 220px;
+  background: var(--bg-surface);
+  border-right: 0.5px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: background-color var(--transition);
+}
+
+.sidebar-header {
+  padding: 20px 16px;
+  border-bottom: 0.5px solid var(--border-subtle);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--accent-primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #ffffff;
+  }
+}
+
+.logo-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.nav-items {
+  flex: 1;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: all var(--transition);
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    transition: color var(--transition);
+  }
+
+  &:hover {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    background: rgba(255, 77, 0, 0.1);
+    color: var(--accent-primary);
+    border-left: 2px solid var(--accent-primary);
+    padding-left: 10px;
+
+    mat-icon {
+      color: var(--accent-primary);
+    }
+  }
+}
+
+.nav-label {
+  font-size: 13px;
+}
+
+.sidebar-footer {
+  padding: 12px 8px;
+  border-top: 0.5px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.theme-toggle {
+  font-size: 13px;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 77, 0, 0.2);
+  border: 0.5px solid rgba(255, 77, 0, 0.3);
+  color: var(--accent-primary);
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.user-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

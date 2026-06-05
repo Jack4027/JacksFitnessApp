@@ -1,78 +1,170 @@
-.history-container {
-  padding: 24px;
-  max-width: 900px;
-  margin: 0 auto;
-}
+.page-header {
+  margin-bottom: 28px;
 
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100vh - 64px);
-}
+  h2 {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
 
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: calc(100vh - 64px);
-  gap: 16px;
-  color: #999;
-
-  mat-icon {
-    font-size: 64px;
-    width: 64px;
-    height: 64px;
+  p {
+    font-size: 13px;
+    color: var(--text-secondary);
   }
 }
 
-.workout-detail {
+.history-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.session-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.session-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 77, 0, 0.1);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: var(--accent-primary);
+  }
+}
+
+.session-date {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: block;
+}
+
+.session-programme {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: block;
+}
+
+.session-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 0.5px solid var(--border-subtle);
+}
+
+.accent-chip {
+  background: rgba(255, 77, 0, 0.1);
+  color: var(--accent-primary);
+  border-color: rgba(255, 77, 0, 0.2);
+}
+
+.info-chip {
+  background: rgba(0, 212, 255, 0.1);
+  color: var(--accent-info);
+  border-color: rgba(0, 212, 255, 0.2);
+}
+
+.session-detail {
   padding: 8px 0;
 }
 
 .exercises-summary {
-  font-size: 14px;
-  color: #555;
+  font-size: 13px;
+  color: var(--text-secondary);
   margin-bottom: 16px;
 }
 
-.section-label {
-  font-size: 14px;
+.sets-section {
+  margin-bottom: 16px;
+}
+
+.sets-section-label {
+  font-size: 11px;
   font-weight: 500;
-  color: #666;
-  margin: 16px 0 8px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
 }
 
 .sets-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  margin-bottom: 16px;
+  border: 0.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
 
-  th {
-    text-align: left;
-    padding: 8px;
-    color: #666;
-    font-weight: 500;
-    border-bottom: 1px solid #eee;
-  }
+.sets-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 
-  td {
-    padding: 8px;
-    border-bottom: 1px solid #f5f5f5;
+.sets-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-top: 0.5px solid var(--border-subtle);
+  align-items: center;
+
+  &:hover {
+    background: var(--bg-elevated);
   }
 }
 
-.pr-icon {
-  color: #ff9800;
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
+.exercise-name {
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
-.notes {
-  font-size: 14px;
-  color: #555;
-  margin-top: 12px;
+.session-notes {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 12px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+  margin-top: 8px;
+}
+
+.cta-btn {
+  padding: 10px 20px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition);
+
+  &:hover {
+    background: #ff6a2f;
+  }
 }

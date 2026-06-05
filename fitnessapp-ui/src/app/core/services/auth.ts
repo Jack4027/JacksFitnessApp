@@ -45,9 +45,11 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  getDisplayName(): string {
-    return localStorage.getItem('displayName') ?? '';
-  }
+getDisplayName(): string {
+  const name = localStorage.getItem('displayName') ?? '';
+  // Fall back to email prefix if no display name set
+  return name.includes('@') ? name.split('@')[0] : name;
+}
 
   getEmail(): string {
     return localStorage.getItem('email') ?? '';

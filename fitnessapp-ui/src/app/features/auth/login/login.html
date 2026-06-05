@@ -1,15 +1,46 @@
 <div class="login-container">
-  <mat-card class="login-card">
-    <mat-card-header>
-      <mat-card-title>JacksFitnessApp</mat-card-title>
-      <mat-card-subtitle>Track your training and nutrition</mat-card-subtitle>
-    </mat-card-header>
+  <div class="login-left">
+    <div class="brand">
+      <div class="brand-icon">
+        <mat-icon>bolt</mat-icon>
+      </div>
+      <span class="brand-name">JacksFit</span>
+    </div>
+    <div class="login-tagline">
+      <h1>Train smarter.<br>Track everything.<br>Beat your records.</h1>
+      <p>Your complete fitness companion for workouts, nutrition, and body metrics.</p>
+    </div>
+    <div class="login-features">
+      <div class="feature">
+        <mat-icon>fitness_center</mat-icon>
+        <span>Workout logging with PR detection</span>
+      </div>
+      <div class="feature">
+        <mat-icon>restaurant</mat-icon>
+        <span>Nutrition tracking with Open Food Facts</span>
+      </div>
+      <div class="feature">
+        <mat-icon>monitor_weight</mat-icon>
+        <span>Body metrics and progress tracking</span>
+      </div>
+      <div class="feature">
+        <mat-icon>calendar_today</mat-icon>
+        <span>Training programme builder</span>
+      </div>
+    </div>
+  </div>
 
-    <mat-card-content>
+  <div class="login-right">
+    <div class="login-card">
       <mat-tab-group>
 
         <mat-tab label="Sign in">
           <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="form">
+            <div class="form-header">
+              <h3>Welcome back</h3>
+              <p>Sign in to your account</p>
+            </div>
+
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Email</mat-label>
               <input matInput formControlName="email" type="email" autocomplete="email" />
@@ -23,18 +54,28 @@
               <mat-error *ngIf="loginForm.get('password')?.hasError('required')">Password is required</mat-error>
             </mat-form-field>
 
-            <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+            @if (errorMessage) {
+            <div class="error-banner">{{ errorMessage }}</div>
+            }
 
             <button mat-raised-button color="primary" type="submit"
-              class="full-width" [disabled]="loginForm.invalid || isLoading">
-              <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-              <span *ngIf="!isLoading">Sign in</span>
+              class="full-width submit-btn" [disabled]="loginForm.invalid || isLoading">
+              @if (isLoading) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                Sign in
+              }
             </button>
           </form>
         </mat-tab>
 
-        <mat-tab label="Register">
+        <mat-tab label="Create account">
           <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="form">
+            <div class="form-header">
+              <h3>Get started</h3>
+              <p>Create your free account</p>
+            </div>
+
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Display name</mat-label>
               <input matInput formControlName="displayName" autocomplete="name" />
@@ -55,17 +96,22 @@
               <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">Minimum 8 characters</mat-error>
             </mat-form-field>
 
-            <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+            @if (errorMessage) {
+            <div class="error-banner">{{ errorMessage }}</div>
+            }
 
             <button mat-raised-button color="primary" type="submit"
-              class="full-width" [disabled]="registerForm.invalid || isLoading">
-              <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-              <span *ngIf="!isLoading">Create account</span>
+              class="full-width submit-btn" [disabled]="registerForm.invalid || isLoading">
+              @if (isLoading) {
+                <mat-spinner diameter="20"></mat-spinner>
+              } @else {
+                Create account
+              }
             </button>
           </form>
         </mat-tab>
 
       </mat-tab-group>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 </div>
