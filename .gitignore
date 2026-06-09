@@ -6,6 +6,9 @@
 .env
 .env.*
 appsettings.Development.json
+
+k8s/secrets.yaml
+
 # User-specific files
 *.rsuser
 *.suo

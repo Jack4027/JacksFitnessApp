@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jacksfitnessapp-frontend
+  namespace: jacksfitnessapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jacksfitnessapp-frontend
+  template:
+    metadata:
+      labels:
+        app: jacksfitnessapp-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: jbdock96/jacksfitnessapp-frontend:latest
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"

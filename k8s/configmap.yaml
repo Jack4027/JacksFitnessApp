@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jacksfitnessapp-config
+  namespace: jacksfitnessapp
+data:
+  ASPNETCORE_ENVIRONMENT: "Production"
+  Jwt__Issuer: "JacksFitnessApp"
+  Jwt__Audience: "JacksFitnessAppClient"
+  Jwt__ExpiryMinutes: "60"

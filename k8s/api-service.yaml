@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jacksfitnessapp-api-service
+  namespace: jacksfitnessapp
+spec:
+  selector:
+    app: jacksfitnessapp-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

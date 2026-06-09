@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jacksfitnessapp-api
+  namespace: jacksfitnessapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jacksfitnessapp-api
+  template:
+    metadata:
+      labels:
+        app: jacksfitnessapp-api
+    spec:
+      containers:
+        - name: api
+          image: jbdock96/jacksfitnessapp-api:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: jacksfitnessapp-config
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              valueFrom:
+                secretKeyRef:
+                  name: jacksfitnessapp-secrets
+                  key: CONNECTION_STRING
+            - name: Jwt__Key
+              valueFrom:
+                secretKeyRef:
+                  name: jacksfitnessapp-secrets
+                  key: JWT_KEY
+            - name: Anthropic__ApiKey
+              valueFrom:
+                secretKeyRef:
+                  name: jacksfitnessapp-secrets
+                  key: ANTHROPIC_API_KEY
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

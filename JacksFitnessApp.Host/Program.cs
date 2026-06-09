@@ -107,7 +107,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://localhost:4200",
-            "https://calm-smoke-0800bf803-preview.westeurope.7.azurestaticapps.net"
+            "https://calm-smoke-0800bf803-preview.westeurope.7.azurestaticapps.net",
+            "https://calm-smoke-0800bf803.7.azurestaticapps.net"
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
